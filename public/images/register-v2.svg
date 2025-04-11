@@ -1,0 +1,31 @@
+<svg width="629" height="511" viewBox="0 0 629 511" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background shapes -->
+  <rect x="30" y="30" width="569" height="451" rx="20" fill="#E6F0FF" opacity="0.5"/>
+  <rect x="100" y="100" width="429" height="311" rx="15" fill="#CCE0FF" opacity="0.7"/>
+
+  <!-- Form illustration -->
+  <rect x="164" y="155" width="300" height="200" rx="8" fill="white" stroke="#2557b1" stroke-width="2"/>
+  <rect x="184" y="185" width="260" height="30" rx="4" fill="#F0F5FF" stroke="#2557b1" stroke-width="1"/>
+  <rect x="184" y="235" width="260" height="30" rx="4" fill="#F0F5FF" stroke="#2557b1" stroke-width="1"/>
+  <rect x="184" y="285" width="260" height="30" rx="4" fill="#F0F5FF" stroke="#2557b1" stroke-width="1"/>
+
+  <!-- Sign-up button -->
+  <rect x="264" y="335" width="100" height="30" rx="4" fill="#2557b1"/>
+  <text x="285" y="355" font-family="Arial, sans-serif" font-size="14" fill="white">Sign Up</text>
+
+  <!-- Person icon -->
+  <circle cx="450" cy="365" r="30" fill="#E6F0FF" stroke="#2557b1" stroke-width="2"/>
+  <circle cx="450" cy="355" r="10" fill="#2557b1"/>
+  <path d="M430 380 Q450 400 470 380" stroke="#2557b1" stroke-width="2" fill="none"/>
+
+  <!-- Character drawing on side -->
+  <circle cx="179" cy="365" r="30" fill="#E6F0FF" stroke="#2557b1" stroke-width="2"/>
+  <circle cx="179" cy="355" r="10" fill="#2557b1"/>
+  <path d="M159 380 Q179 400 199 380" stroke="#2557b1" stroke-width="2" fill="none"/>
+
+  <!-- Decorative elements -->
+  <circle cx="100" cy="100" r="15" fill="#2557b1" opacity="0.3"/>
+  <circle cx="529" cy="100" r="15" fill="#2557b1" opacity="0.3"/>
+  <circle cx="100" cy="411" r="15" fill="#2557b1" opacity="0.3"/>
+  <circle cx="529" cy="411" r="15" fill="#2557b1" opacity="0.3"/>
+</svg>

@@ -1,0 +1,7 @@
+<svg width="200" height="45" viewBox="0 0 200 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 10 H40 A5 5 0 0 1 45 15 V30 A5 5 0 0 1 40 35 H10 A5 5 0 0 1 5 30 V15 A5 5 0 0 1 10 10 Z" fill="#2557b1"/>
+  <circle cx="25" cy="22.5" r="8" fill="white"/>
+  <path d="M25 14.5 L25 30.5" stroke="white" stroke-width="2"/>
+  <path d="M17 22.5 L33 22.5" stroke="white" stroke-width="2"/>
+  <text x="55" y="28" font-family="Arial, sans-serif" font-weight="bold" font-size="16" fill="#2557b1">Bueiro Digital</text>
+</svg>
