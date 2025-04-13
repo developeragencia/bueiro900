@@ -19,19 +19,46 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import DashboardLayout from '@/components/DashboardLayout';
 
-// Schema for campaign validation
+// Schema for campaign validation with enhanced validation
 const campaignSchema = z.object({
-  name: z.string().min(3, 'O nome da campanha deve ter pelo menos 3 caracteres'),
-  url: z.string().url('URL inválida'),
-  utmSource: z.string().min(1, 'Source é obrigatório'),
-  utmMedium: z.string().min(1, 'Medium é obrigatório'),
-  utmCampaign: z.string().min(1, 'Campaign é obrigatório'),
-  utmTerm: z.string().optional(),
-  utmContent: z.string().optional(),
-  status: z.enum(['active', 'paused', 'draft']),
-  spend: z.number().min(0, 'Valor deve ser maior ou igual a zero'),
-  platform: z.string().optional(),
-  notes: z.string().optional(),
+  name: z.string()
+    .min(3, 'O nome da campanha deve ter pelo menos 3 caracteres')
+    .max(100, 'O nome da campanha não pode exceder 100 caracteres')
+    .regex(/^[\w\s-]+$/, 'Use apenas letras, números, espaços e hífens'),
+  url: z.string()
+    .url('URL inválida')
+    .refine(url => url.startsWith('http'), 'A URL deve começar com http:// ou https://'),
+  utmSource: z.string()
+    .min(1, 'Source é obrigatório')
+    .max(50, 'Source não pode exceder 50 caracteres')
+    .regex(/^[\w-]+$/, 'Use apenas letras, números e hífens'),
+  utmMedium: z.string()
+    .min(1, 'Medium é obrigatório')
+    .max(50, 'Medium não pode exceder 50 caracteres')
+    .regex(/^[\w-]+$/, 'Use apenas letras, números e hífens'),
+  utmCampaign: z.string()
+    .min(1, 'Campaign é obrigatório')
+    .max(100, 'Campaign não pode exceder 100 caracteres')
+    .regex(/^[\w-]+$/, 'Use apenas letras, números e hífens'),
+  utmTerm: z.string()
+    .max(100, 'Term não pode exceder 100 caracteres')
+    .regex(/^[\w\s-]*$/, 'Use apenas letras, números, espaços e hífens')
+    .optional(),
+  utmContent: z.string()
+    .max(100, 'Content não pode exceder 100 caracteres')
+    .regex(/^[\w\s-]*$/, 'Use apenas letras, números, espaços e hífens')
+    .optional(),
+  status: z.enum(['active', 'paused', 'draft', 'archived']),
+  spend: z.number()
+    .min(0, 'Valor deve ser maior ou igual a zero')
+    .max(1000000, 'Valor não pode exceder 1.000.000')
+    .multipleOf(0.01, 'Use no máximo 2 casas decimais'),
+  platform: z.string()
+    .max(50, 'Platform não pode exceder 50 caracteres')
+    .optional(),
+  notes: z.string()
+    .max(500, 'Notas não podem exceder 500 caracteres')
+    .optional(),
 });
 
 type CampaignFormValues = z.infer<typeof campaignSchema>;
@@ -110,50 +137,75 @@ export default function EditCampaignPage() {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
-  // Handle save button click
+  // Handle save button click with enhanced error handling
   const onSubmit = async (data: CampaignFormValues) => {
-    if (!campaign) return;
+    if (!campaign) {
+      toast.error('Campanha não encontrada.');
+      return;
+    }
 
     setIsSubmitting(true);
 
     try {
-      // Construct the complete URL with UTM parameters
-      const baseUrl = data.url;
-      const urlWithParams = new URL(baseUrl);
-
-      urlWithParams.searchParams.set('utm_source', data.utmSource);
-      urlWithParams.searchParams.set('utm_medium', data.utmMedium);
-      urlWithParams.searchParams.set('utm_campaign', data.utmCampaign);
-
-      if (data.utmTerm) {
-        urlWithParams.searchParams.set('utm_term', data.utmTerm);
+      // Validate URL format
+      let baseUrl: URL;
+      try {
+        baseUrl = new URL(data.url);
+      } catch (error) {
+        toast.error('URL inválida. Verifique o formato.');
+        return;
       }
 
-      if (data.utmContent) {
-        urlWithParams.searchParams.set('utm_content', data.utmContent);
-      }
+      // Validate UTM parameters
+      const utmParams = {
+        utm_source: data.utmSource,
+        utm_medium: data.utmMedium,
+        utm_campaign: data.utmCampaign,
+        ...(data.utmTerm && { utm_term: data.utmTerm }),
+        ...(data.utmContent && { utm_content: data.utmContent })
+      };
 
-      // Update campaign in store
-      await updateCampaign(campaign.id, {
-        name: data.name,
-        url: urlWithParams.toString(),
-        utmSource: data.utmSource,
-        utmMedium: data.utmMedium,
-        utmCampaign: data.utmCampaign,
-        utmTerm: data.utmTerm || undefined,
-        utmContent: data.utmContent || undefined,
-        status: data.status,
-        spend: data.spend,
-        platform: data.platform || undefined,
-        notes: data.notes || undefined,
-        tags: tags,
+      // Add UTM parameters to URL
+      Object.entries(utmParams).forEach(([key, value]) => {
+        if (value) {
+          baseUrl.searchParams.set(key, value.toLowerCase().replace(/\s+/g, '-'));
+        }
       });
+
+      // Validate spend value
+      if (data.spend < 0 || data.spend > 1000000) {
+        toast.error('Valor de gasto inválido. Deve estar entre 0 e 1.000.000.');
+        return;
+      }
+
+      // Update campaign in store with validation
+      const updatedCampaign = {
+        name: data.name.trim(),
+        url: baseUrl.toString(),
+        utmSource: data.utmSource.toLowerCase(),
+        utmMedium: data.utmMedium.toLowerCase(),
+        utmCampaign: data.utmCampaign.toLowerCase(),
+        utmTerm: data.utmTerm?.toLowerCase(),
+        utmContent: data.utmContent?.toLowerCase(),
+        status: data.status,
+        spend: Number(data.spend.toFixed(2)),
+        platform: data.platform?.trim(),
+        notes: data.notes?.trim(),
+        tags: tags.map(tag => tag.trim().toLowerCase()),
+        dateUpdated: new Date().toISOString()
+      };
+
+      await updateCampaign(campaign.id, updatedCampaign);
 
       toast.success('Campanha atualizada com sucesso!');
       router.push(`/dashboard/campaigns/${campaign.id}`);
     } catch (error) {
       console.error('Error updating campaign:', error);
-      toast.error('Erro ao atualizar campanha.');
+      if (error instanceof Error) {
+        toast.error(`Erro ao atualizar campanha: ${error.message}`);
+      } else {
+        toast.error('Erro ao atualizar campanha. Tente novamente.');
+      }
     } finally {
       setIsSubmitting(false);
     }

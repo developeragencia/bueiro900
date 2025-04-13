@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// Tipos para as entidades principais
+// Tipos para as entidades principais com validação de dados
 export interface User {
   id: string;
   name: string;
@@ -11,6 +11,12 @@ export interface User {
   lastActive: string;
   dateCreated: string;
   avatar?: string;
+  permissions?: string[];
+  settings?: {
+    notifications: boolean;
+    theme: 'light' | 'dark' | 'system';
+    language: string;
+  };
 }
 
 export interface Campaign {
@@ -22,15 +28,26 @@ export interface Campaign {
   utmCampaign: string;
   utmTerm?: string;
   utmContent?: string;
-  status: 'active' | 'paused' | 'draft';
+  status: 'active' | 'paused' | 'draft' | 'archived';
   spend: number;
   revenue: number;
   conversions: number;
-  visits?: number; // Added visits property
+  visits: number;
   dateCreated: string;
   dateUpdated: string;
   tags: string[];
   platform?: string;
+  metrics?: {
+    roas?: number;
+    cpc?: number;
+    ctr?: number;
+    conversionRate?: number;
+  };
+  goals?: {
+    targetSpend?: number;
+    targetRevenue?: number;
+    targetConversions?: number;
+  };
 }
 
 export interface Integration {

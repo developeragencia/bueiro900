@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import QRCode from "qrcode.react";
+import { QRCodeSVG } from 'qrcode.react';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -114,7 +114,7 @@ export default function PaymentModal({
 
               <TabsContent value="pix" className="space-y-4">
                 <div className="flex flex-col items-center space-y-4">
-                  <QRCode value={pixCode} size={200} level="H" />
+                  <QRCodeSVG value={pixCode} size={256} />
                   <Button
                     onClick={() => navigator.clipboard.writeText(pixCode)}
                     variant="outline"

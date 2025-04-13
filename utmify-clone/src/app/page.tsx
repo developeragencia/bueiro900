@@ -5,9 +5,10 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { RocketIcon, ChevronDown, CheckCircle, Clock, Target, Zap, BarChart2, Send, Layout, Bell, Shield } from "lucide-react";
+import { RocketIcon, ChevronDown, CheckCircle, Clock, Target, Zap, BarChart2, Send, Layout, Bell, Shield, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import LogoCarousel from "@/components/LogoCarousel";
+import "./animations.css";
 
 export default function Home() {
   // Gerar estrelas com IDs únicos durante a renderização no cliente
@@ -32,7 +33,7 @@ export default function Home() {
 
   // Componente de hero section que só renderiza elementos animados após a montagem completa
   const HeroSection = () => (
-    <div className="relative bg-gradient-to-r from-blue-900 to-indigo-800 text-white py-24 overflow-hidden">
+    <div className="relative bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900 text-white py-32 overflow-hidden">
       <>
         {/* Animated stars in background */}
         <div className="absolute inset-0">
@@ -57,25 +58,27 @@ export default function Home() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col lg:flex-row items-center justify-between">
-            <div className="lg:w-1/2 text-center lg:text-left mb-10 lg:mb-0">
+            <div className="lg:w-1/2 text-center lg:text-left mb-10 lg:mb-0 animate-slide-up">
               <div className="flex items-center justify-center lg:justify-start mb-8">
                 <img
                   src="/logo/rocket-logo.svg"
                   alt="Bueiro Digital logo"
-                  className="h-28 w-auto"
+                  className="h-28 w-auto animate-float hover-glow"
                   crossOrigin="anonymous"
                 />
               </div>
-              <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
+              <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight animate-fade-in" style={{animationDelay: '0.3s'}}>
                 Rastreie suas vendas <br />
-                <span className="text-blue-300">e aumente seu lucro em até 40%</span>
+                <span className="gradient-text bg-clip-text">e aumente seu lucro em até 40%</span>
               </h1>
               <p className="text-xl text-blue-100 mb-10 max-w-xl">
                 Transforme seu modo de escalar, sem medo de errar,
                 <br className="hidden lg:block" /> com nossa plataforma de rastreamento.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link href="/register" className="bg-white text-blue-800 hover:bg-blue-50 px-8 py-4 rounded-full font-medium text-lg transition-all transform hover:scale-105">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in" style={{animationDelay: '0.6s'}}>
+                <Link href="/register" className="bg-white text-blue-800 hover:bg-blue-50 px-8 py-4 rounded-full font-medium text-lg transition-all hover-scale hover-glow flex items-center">
+                  <span>Testar gratuitamente</span>
+                  <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
                   Testar gratuitamente
                 </Link>
                 <Link href="#features" className="bg-transparent border border-white/30 backdrop-blur-sm hover:bg-white/10 text-white px-8 py-4 rounded-full font-medium text-lg flex items-center justify-center group">
@@ -124,8 +127,8 @@ export default function Home() {
       {/* Features Section */}
       <div id="features" className="container mx-auto px-4 py-20">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Principais Recursos</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-xl shadow-sm text-center hover:shadow-md transition-shadow">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8" style={{perspective: '1000px'}}>
+          <div className="bg-white p-8 rounded-xl shadow-sm text-center hover:shadow-md transition-all hover-lift hover-glow animate-scale-in" style={{animationDelay: '0.3s'}}>
             <div className="bg-blue-100 h-16 w-16 rounded-full mx-auto mb-6 flex items-center justify-center">
               <Target className="h-8 w-8 text-blue-600" />
             </div>
@@ -135,7 +138,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="bg-white p-8 rounded-xl shadow-sm text-center hover:shadow-md transition-shadow">
+          <div className="bg-white p-8 rounded-xl shadow-sm text-center hover:shadow-md transition-all hover-lift hover-glow animate-scale-in" style={{animationDelay: '0.3s'}}>
             <div className="bg-blue-100 h-16 w-16 rounded-full mx-auto mb-6 flex items-center justify-center">
               <Clock className="h-8 w-8 text-blue-600" />
             </div>
@@ -145,7 +148,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="bg-white p-8 rounded-xl shadow-sm text-center hover:shadow-md transition-shadow">
+          <div className="bg-white p-8 rounded-xl shadow-sm text-center hover:shadow-md transition-all hover-lift hover-glow animate-scale-in" style={{animationDelay: '0.3s'}}>
             <div className="bg-blue-100 h-16 w-16 rounded-full mx-auto mb-6 flex items-center justify-center">
               <Zap className="h-8 w-8 text-blue-600" />
             </div>
