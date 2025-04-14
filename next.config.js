@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: 'export',
+  trailingSlash: true,
   images: {
-    domains: ['localhost'],
     unoptimized: true,
     remotePatterns: [
       {
@@ -18,7 +18,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
-    serverActions: true,
+    serverActions: false,
   },
   webpack: (config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
