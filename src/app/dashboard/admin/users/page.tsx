@@ -74,7 +74,7 @@ export default function UsersPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const filteredUsers = users.filter(user => {
-    const matchesSearch = 
+    const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = filterRole === 'all' || user.role === filterRole;
@@ -134,18 +134,18 @@ export default function UsersPage() {
     <div className="p-6">
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
-          <div>
+            <div>
             <h1 className="text-2xl font-bold text-gray-900">Usuários</h1>
             <p className="text-gray-500 mt-1">Gerencie os usuários do sistema</p>
-          </div>
+            </div>
           <button
             onClick={() => setShowCreateModal(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
           >
             <Plus className="h-5 w-5 mr-2" />
-            Novo Usuário
+                    Novo Usuário
           </button>
-        </div>
+                    </div>
 
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="flex-1 relative">
@@ -156,58 +156,58 @@ export default function UsersPage() {
               className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <select
+                      />
+                    </div>
+                        <select
             className="w-full sm:w-48 px-4 py-2 border border-gray-200 rounded-lg"
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
           >
             <option value="all">Todas as funções</option>
-            <option value="admin">Administrador</option>
-            <option value="editor">Editor</option>
+                          <option value="admin">Administrador</option>
+                          <option value="editor">Editor</option>
             <option value="user">Usuário</option>
-          </select>
-          <select
+                        </select>
+                        <select
             className="w-full sm:w-48 px-4 py-2 border border-gray-200 rounded-lg"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
             <option value="all">Todos os status</option>
-            <option value="active">Ativo</option>
-            <option value="inactive">Inativo</option>
-            <option value="pending">Pendente</option>
+                          <option value="active">Ativo</option>
+                          <option value="inactive">Inativo</option>
+                          <option value="pending">Pendente</option>
             <option value="blocked">Bloqueado</option>
-          </select>
-        </div>
+                  </select>
+                </div>
 
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Usuário
-                  </th>
+                        Usuário
+                      </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Função
-                  </th>
+                      </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
+                        Status
+                      </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Último Acesso
-                  </th>
+                        Último Acesso
+                      </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Criado em
-                  </th>
+                      </th>
                   <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredUsers.map((user) => (
+                        Ações
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {filteredUsers.map((user) => (
                   <motion.tr
                     key={user.id}
                     initial={{ opacity: 0 }}
@@ -215,27 +215,27 @@ export default function UsersPage() {
                     className="hover:bg-gray-50"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
+                          <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
                           <img
                             className="h-10 w-10 rounded-full"
-                            src={user.avatar}
-                            alt={user.name}
-                          />
-                        </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                          <div className="text-sm text-gray-500">{user.email}</div>
-                        </div>
-                      </div>
-                    </td>
+                                  src={user.avatar}
+                                  alt={user.name}
+                                />
+                            </div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                              <div className="text-sm text-gray-500">{user.email}</div>
+                            </div>
+                          </div>
+                        </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
                         {user.role === 'admin' && 'Administrador'}
-                        {user.role === 'editor' && 'Editor'}
+                            {user.role === 'editor' && 'Editor'}
                         {user.role === 'user' && 'Usuário'}
-                      </span>
-                    </td>
+                          </span>
+                        </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
                         <span className="mr-1">{getStatusIcon(user.status)}</span>
@@ -243,16 +243,16 @@ export default function UsersPage() {
                         {user.status === 'inactive' && 'Inativo'}
                         {user.status === 'pending' && 'Pendente'}
                         {user.status === 'blocked' && 'Bloqueado'}
-                      </span>
-                    </td>
+                          </span>
+                        </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {user.lastLogin
                         ? new Date(user.lastLogin).toLocaleString()
                         : 'Nunca acessou'}
-                    </td>
+                        </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(user.createdAt).toLocaleDateString()}
-                    </td>
+                        </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex items-center justify-center space-x-2">
                         <button
@@ -272,14 +272,14 @@ export default function UsersPage() {
                           title="Enviar email"
                         >
                           <Mail className="h-4 w-4 text-gray-500" />
-                        </button>
+                            </button>
                         <button
                           className="p-1 hover:bg-red-100 rounded-full"
                           title="Excluir"
                           onClick={() => setShowDeleteConfirm(user.id)}
                         >
                           <Trash2 className="h-4 w-4 text-red-500" />
-                        </button>
+                            </button>
 
                         {showDeleteConfirm === user.id && (
                           <div className="absolute bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-10">
@@ -292,22 +292,22 @@ export default function UsersPage() {
                                 onClick={() => setShowDeleteConfirm(null)}
                               >
                                 Cancelar
-                              </button>
+                            </button>
                               <button
                                 className="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
                                 onClick={() => handleDeleteUser(user.id)}
                               >
                                 Excluir
-                              </button>
+                            </button>
                             </div>
                           </div>
                         )}
-                      </div>
-                    </td>
+                          </div>
+                        </td>
                   </motion.tr>
                 ))}
-              </tbody>
-            </table>
+                  </tbody>
+                </table>
           </div>
         </div>
       </div>

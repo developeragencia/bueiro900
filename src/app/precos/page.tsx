@@ -221,7 +221,7 @@ export default function PricingPage() {
 
           <div className="mt-8 flex justify-center items-center gap-4">
             <span className={`text-sm ${billingPeriod === 'monthly' ? 'text-primary' : 'text-gray-500'}`}>
-              Mensal
+                Mensal
             </span>
             <Button
               variant="outline"
@@ -289,9 +289,9 @@ export default function PricingPage() {
                     <div key={i} className="flex items-center gap-2 text-gray-400">
                       <X className="h-5 w-5" />
                       <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
+              </div>
+            ))}
+      </div>
 
                 <Button
                   className="w-full"
@@ -329,11 +329,11 @@ export default function PricingPage() {
                     {billingPeriod === 'yearly' && (
                       <div className="text-sm text-green-600">
                         20% de desconto aplicado
-                      </div>
+          </div>
                     )}
-                  </div>
-                </div>
-              </div>
+          </div>
+        </div>
+      </div>
 
               <div className="space-y-4">
                 <div>
@@ -346,7 +346,7 @@ export default function PricingPage() {
                     }))}
                     maxLength={19}
                   />
-                </div>
+              </div>
                 <div>
                   <Input
                     placeholder="Nome do titular"
@@ -356,7 +356,7 @@ export default function PricingPage() {
                       cardHolder: e.target.value
                     }))}
                   />
-                </div>
+            </div>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     placeholder="MM/AA"
@@ -377,8 +377,8 @@ export default function PricingPage() {
                     }))}
                     maxLength={3}
                   />
-                </div>
               </div>
+            </div>
 
               <Button
                 className="w-full"
@@ -411,7 +411,7 @@ export default function PricingPage() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
-    </div>
   );
 }

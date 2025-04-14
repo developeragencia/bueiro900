@@ -91,7 +91,7 @@ export function UTMShareDialog({ campaign, open, onOpenChange }: UTMShareDialogP
         <div className="space-y-6 py-4">
           <div className="space-y-2">
             <Label htmlFor="base-url">URL Base</Label>
-            <Input
+              <Input
               id="base-url"
               placeholder="https://exemplo.com/pagina"
               value={baseUrl}
@@ -140,17 +140,17 @@ export function UTMShareDialog({ campaign, open, onOpenChange }: UTMShareDialogP
                   value={generateUtmUrl()}
                   placeholder="Insira uma URL base para gerar o link"
                 />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleCopy}
-                  className="shrink-0"
-                >
-                  {copied ? (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleCopy}
+              className="shrink-0"
+            >
+              {copied ? (
                     <Check className="h-4 w-4" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
                   <span className="sr-only">Copiar URL</span>
                 </Button>
               </div>

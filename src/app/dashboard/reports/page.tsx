@@ -157,17 +157,17 @@ export default function ReportsPage() {
                   <h3 className="text-2xl font-bold text-gray-900">
                     R$ {metrics.totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </h3>
-                </div>
+          </div>
                 <BarChart3 className="h-8 w-8 text-blue-500" />
-              </div>
+        </div>
               <div className="mt-4 flex items-center text-sm text-green-600">
                 <TrendingUp className="h-4 w-4 mr-1" />
                 +{metrics.revenueGrowth}% este mês
-              </div>
+            </div>
             </CardContent>
           </Card>
 
-          <Card>
+              <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -180,11 +180,11 @@ export default function ReportsPage() {
               </div>
               <div className="mt-4 flex items-center text-sm text-gray-500">
                 {metrics.orderCount} pedidos no total
-              </div>
-            </CardContent>
-          </Card>
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card>
+              <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -195,10 +195,10 @@ export default function ReportsPage() {
               </div>
               <div className="mt-4 flex items-center text-sm text-gray-500">
                 {metrics.customerRetention}% retenção de clientes
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
         {/* Filters */}
         <Card className="mb-8">
@@ -207,15 +207,15 @@ export default function ReportsPage() {
             <CardDescription>
               Selecione o período e tipo de relatório
             </CardDescription>
-          </CardHeader>
-          <CardContent>
+                </CardHeader>
+                <CardContent>
             <div className="flex space-x-4">
               <div className="w-72">
                 <DatePickerWithRange
                   value={dateRange}
                   onChange={setDateRange}
                 />
-              </div>
+                          </div>
               <Select value={reportType} onValueChange={setReportType}>
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Tipo" />
@@ -232,19 +232,19 @@ export default function ReportsPage() {
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Atualizar
               </Button>
-            </div>
-          </CardContent>
-        </Card>
+                  </div>
+                </CardContent>
+              </Card>
 
         {/* Reports Table */}
-        <Card>
+              <Card>
           <CardHeader>
             <CardTitle>Relatórios Gerados</CardTitle>
             <CardDescription>
               Lista de relatórios disponíveis para download
             </CardDescription>
-          </CardHeader>
-          <CardContent>
+                </CardHeader>
+                <CardContent>
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -281,9 +281,9 @@ export default function ReportsPage() {
                                 {metric.change >= 0 ? <TrendingUp className="h-4 w-4 inline" /> : <TrendingDown className="h-4 w-4 inline" />}
                                 {Math.abs(metric.change)}%
                               </span>
-                            </div>
-                          ))}
-                        </div>
+                      </div>
+                    ))}
+                  </div>
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -301,22 +301,22 @@ export default function ReportsPage() {
                       <TableCell>
                         <div className="flex space-x-2">
                           {report.downloadUrl && (
-                            <Button
+                <Button
                               size="sm"
-                              variant="outline"
+                  variant="outline"
                               onClick={() => handleDownload(report.id, report.downloadUrl!)}
-                            >
+                >
                               <Download className="h-4 w-4" />
-                            </Button>
+                </Button>
                           )}
-                          <Button
+                <Button
                             size="sm"
-                            variant="outline"
+                  variant="outline"
                             onClick={() => handlePrint(report.id)}
-                          >
+                >
                             <Printer className="h-4 w-4" />
-                          </Button>
-                        </div>
+                </Button>
+              </div>
                       </TableCell>
                     </TableRow>
                   ))}

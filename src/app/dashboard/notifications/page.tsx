@@ -202,10 +202,10 @@ export default function NotificationsPage() {
           </select>
         </div>
 
-        <div className="space-y-4">
+                  <div className="space-y-4">
           {filteredNotifications.map((notification) => (
             <motion.div
-              key={notification.id}
+                          key={notification.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className={`bg-white rounded-lg shadow-sm p-4 ${
@@ -214,19 +214,19 @@ export default function NotificationsPage() {
             >
               <div className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  {getNotificationIcon(notification.type)}
-                </div>
+                            {getNotificationIcon(notification.type)}
+                          </div>
                 <div className="ml-4 flex-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className={`text-sm font-medium ${
+                            <div className="flex items-center justify-between">
+                              <h3 className={`text-sm font-medium ${
                       notification.read ? 'text-gray-600' : 'text-gray-900'
-                    }`}>
-                      {notification.title}
-                    </h3>
+                              }`}>
+                                {notification.title}
+                              </h3>
                     <div className="flex items-center space-x-2">
-                      <span className="text-xs text-gray-500">
+                              <span className="text-xs text-gray-500">
                         {new Date(notification.timestamp).toLocaleString()}
-                      </span>
+                              </span>
                       <button
                         onClick={() => handleDeleteNotification(notification.id)}
                         className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
@@ -234,7 +234,7 @@ export default function NotificationsPage() {
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
-                  </div>
+                            </div>
                   <p className="mt-1 text-sm text-gray-500">{notification.message}</p>
                   <div className="mt-2 flex items-center space-x-4">
                     {!notification.read && (
@@ -249,13 +249,13 @@ export default function NotificationsPage() {
                       <a
                         href={notification.actionUrl}
                         className="text-sm text-blue-600 hover:text-blue-800"
-                      >
-                        Ver detalhes
+                              >
+                                Ver detalhes
                       </a>
-                    )}
-                  </div>
-                </div>
-              </div>
+                            )}
+                          </div>
+                          </div>
+                        </div>
             </motion.div>
           ))}
 
@@ -263,12 +263,12 @@ export default function NotificationsPage() {
             <div className="text-center py-8">
               <Bell className="mx-auto h-12 w-12 text-gray-400" />
               <h3 className="mt-2 text-sm font-medium text-gray-900">Nenhuma notificação</h3>
-              <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-1 text-sm text-gray-500">
                 Não há notificações que correspondam aos seus filtros.
-              </p>
-            </div>
-          )}
-        </div>
+                        </p>
+                      </div>
+                    )}
+                  </div>
       </div>
 
       {/* Modal de Configurações */}

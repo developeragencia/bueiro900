@@ -314,34 +314,34 @@ export default function SettingsPage() {
                     <label className="block text-sm font-medium text-gray-700">Nome</label>
                     <input
                       type="text"
-                      value={profile.name}
+                          value={profile.name}
                       onChange={(e) => handleProfileChange('name', e.target.value)}
                       disabled={!isEditing}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
+                        />
+                      </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Email</label>
                     <input
-                      type="email"
-                      value={profile.email}
+                          type="email"
+                          value={profile.email}
                       onChange={(e) => handleProfileChange('email', e.target.value)}
                       disabled={!isEditing}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
+                        />
+                      </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Empresa</label>
                     <input
                       type="text"
-                      value={profile.company}
+                          value={profile.company}
                       onChange={(e) => handleProfileChange('company', e.target.value)}
                       disabled={!isEditing}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
+                        />
+                      </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Telefone</label>
@@ -351,8 +351,8 @@ export default function SettingsPage() {
                       onChange={(e) => handleProfileChange('phone', e.target.value)}
                       disabled={!isEditing}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
+                        />
+                      </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Fuso Horário</label>
@@ -370,18 +370,18 @@ export default function SettingsPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Idioma</label>
-                    <select
-                      value={profile.language}
+                        <select
+                          value={profile.language}
                       onChange={(e) => handleProfileChange('language', e.target.value)}
                       disabled={!isEditing}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="pt-BR">Português (Brasil)</option>
-                      <option value="en-US">English (US)</option>
-                      <option value="es">Español</option>
-                    </select>
-                  </div>
-                </div>
+                        >
+                          <option value="pt-BR">Português (Brasil)</option>
+                          <option value="en-US">English (US)</option>
+                          <option value="es">Español</option>
+                        </select>
+                      </div>
+                    </div>
               </motion.div>
             )}
 
@@ -504,10 +504,10 @@ export default function SettingsPage() {
               >
                 <h2 className="text-lg font-semibold mb-6">Preferências de Notificação</h2>
 
-                <div className="space-y-6">
-                  <div>
+                  <div className="space-y-6">
+                    <div>
                     <h3 className="text-sm font-medium text-gray-900 mb-4">Canais de Notificação</h3>
-                    <div className="space-y-4">
+                      <div className="space-y-4">
                       {Object.entries(notifications)
                         .filter(([key]) => ['email', 'push', 'sms', 'whatsapp'].includes(key))
                         .map(([key, value]) => (
@@ -521,10 +521,10 @@ export default function SettingsPage() {
                             <label className="ml-3 text-sm text-gray-700">
                               {key.charAt(0).toUpperCase() + key.slice(1)}
                             </label>
-                          </div>
+                      </div>
                         ))}
+                      </div>
                     </div>
-                  </div>
 
                   <div>
                     <h3 className="text-sm font-medium text-gray-900 mb-4">Tipos de Alerta</h3>
@@ -533,7 +533,7 @@ export default function SettingsPage() {
                         .filter(([key]) => key.endsWith('Alert'))
                         .map(([key, value]) => (
                           <div key={key} className="flex items-center">
-                            <input
+                          <input
                               type="checkbox"
                               checked={value}
                               onChange={() => handleNotificationChange(key as keyof NotificationSettings)}
@@ -541,8 +541,8 @@ export default function SettingsPage() {
                             />
                             <label className="ml-3 text-sm text-gray-700">
                               {key.replace('Alert', '').split(/(?=[A-Z])/).join(' ')}
-                            </label>
-                          </div>
+                          </label>
+                        </div>
                         ))}
                     </div>
                   </div>
@@ -589,7 +589,7 @@ export default function SettingsPage() {
                       </button>
                     </div>
                   ))}
-                </div>
+                        </div>
               </motion.div>
             )}
 

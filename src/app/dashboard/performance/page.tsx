@@ -122,16 +122,16 @@ export default function PerformancePage() {
             </p>
           </div>
           <div className="flex space-x-4">
-            <select
+              <select
               className="px-4 py-2 border border-gray-200 rounded-lg"
-              value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
-            >
+                value={dateRange}
+                onChange={(e) => setDateRange(e.target.value)}
+              >
               <option value="7d">Últimos 7 dias</option>
               <option value="30d">Últimos 30 dias</option>
               <option value="90d">Últimos 90 dias</option>
               <option value="12m">Último ano</option>
-            </select>
+              </select>
             <button
               onClick={handleRefreshData}
               className="p-2 text-gray-600 hover:text-gray-800 rounded-full hover:bg-gray-100"
@@ -176,7 +176,7 @@ export default function PerformancePage() {
                 </span>
                 <span className="text-gray-500 text-sm ml-2">vs. período anterior</span>
               </div>
-            </div>
+        </div>
           </motion.div>
 
           <motion.div
@@ -204,9 +204,9 @@ export default function PerformancePage() {
                 </span>
                 <span className="text-gray-500 text-sm ml-2">
                   {metrics.users.active} ativos
-                </span>
-              </div>
-            </div>
+                    </span>
+                  </div>
+                  </div>
           </motion.div>
 
           <motion.div
@@ -218,7 +218,7 @@ export default function PerformancePage() {
             <div className="flex items-center justify-between">
               <h3 className="text-gray-500 text-sm font-medium">Pedidos</h3>
               <ShoppingCart className="h-5 w-5 text-purple-500" />
-            </div>
+                    </div>
             <div className="mt-2">
               <p className="text-2xl font-semibold text-gray-900">{metrics.orders.total}</p>
               <div className="flex items-center mt-2">
@@ -235,7 +235,7 @@ export default function PerformancePage() {
                 <span className="text-gray-500 text-sm ml-2">
                   {metrics.orders.pending} pendentes
                 </span>
-              </div>
+                </div>
             </div>
           </motion.div>
 
@@ -287,7 +287,7 @@ export default function PerformancePage() {
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Usuários Ativos</h3>
-              <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
                 <button className="p-1 text-gray-400 hover:text-gray-600">
                   <Filter className="h-4 w-4" />
                 </button>
@@ -307,35 +307,35 @@ export default function PerformancePage() {
           <div className="px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">Métricas Detalhadas</h3>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
                 <tr className="bg-gray-50">
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Métrica
-                  </th>
+                    </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Valor Atual
-                  </th>
+                    </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Valor Anterior
-                  </th>
+                    </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Variação
-                  </th>
-                </tr>
-              </thead>
+                    </th>
+                  </tr>
+                </thead>
               <tbody className="divide-y divide-gray-200">
                 <tr>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     Receita Total
-                  </td>
+                      </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatCurrency(metrics.revenue.current)}
-                  </td>
+                      </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatCurrency(metrics.revenue.previous)}
-                  </td>
+                      </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`inline-flex items-center ${
                       metrics.revenue.growth >= 0 ? 'text-green-600' : 'text-red-600'
@@ -346,15 +346,15 @@ export default function PerformancePage() {
                         <ArrowDownRight className="h-4 w-4 mr-1" />
                       )}
                       {Math.abs(metrics.revenue.growth)}%
-                    </span>
-                  </td>
-                </tr>
+                        </span>
+                      </td>
+                    </tr>
                 {/* Adicionar mais linhas conforme necessário */}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
           </div>
         </div>
       </div>
-    </div>
+        </div>
   );
 }

@@ -42,10 +42,10 @@ interface RegisterData {
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState<RegisterData>({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     acceptTerms: false
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -160,7 +160,7 @@ export default function RegisterPage() {
             <ArrowLeft className="h-5 w-5 mr-2" />
             Voltar
           </Button>
-        </div>
+      </div>
 
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900">
@@ -179,7 +179,7 @@ export default function RegisterPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+              <div className="space-y-4">
               <Button
                 variant="outline"
                 className="w-full"
@@ -223,8 +223,8 @@ export default function RegisterPage() {
                 <div className="space-y-2">
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <Input
-                      type="text"
+                  <Input
+                    type="text"
                       placeholder="Seu nome completo"
                       className="pl-10"
                       value={formData.name}
@@ -242,8 +242,8 @@ export default function RegisterPage() {
                 <div className="space-y-2">
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <Input
-                      type="email"
+                  <Input
+                    type="email"
                       placeholder="Seu email"
                       className="pl-10"
                       value={formData.email}
@@ -347,33 +347,33 @@ export default function RegisterPage() {
                       {errors.acceptTerms}
                     </p>
                   )}
-                </div>
+              </div>
 
                 <Button
                   type="submit"
                   className="w-full"
                   disabled={isLoading}
                 >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Criando conta...
-                    </>
-                  ) : (
-                    'Criar conta'
-                  )}
-                </Button>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Criando conta...
+                  </>
+                ) : (
+                  'Criar conta'
+                )}
+              </Button>
               </form>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Separator />
             <p className="text-sm text-center text-gray-600">
-              Já tem uma conta?{' '}
+                  Já tem uma conta?{' '}
               <Link href="/login" className="text-primary hover:underline">
-                Faça login
-              </Link>
-            </p>
+                    Faça login
+                  </Link>
+                </p>
           </CardFooter>
         </Card>
       </motion.div>

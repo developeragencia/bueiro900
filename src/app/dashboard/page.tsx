@@ -120,10 +120,10 @@ export default function DashboardPage() {
             <Settings className="w-5 h-5" />
           </Link>
         </div>
-      </div>
+        </div>
 
       {/* Métricas Principais */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-gray-500">Receita Total</h3>
@@ -144,7 +144,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-gray-500">Clientes Ativos</h3>
             <Users className="w-5 h-5 text-blue-500" />
-          </div>
+              </div>
           <p className="text-2xl font-semibold text-gray-900">
             {metrics.customers.active.toLocaleString('pt-BR')}
           </p>
@@ -152,14 +152,14 @@ export default function DashboardPage() {
             <span className="text-sm text-gray-600">
               +{metrics.customers.new} novos hoje
             </span>
-          </div>
+              </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-gray-500">Vendas</h3>
             <ShoppingCart className="w-5 h-5 text-blue-500" />
-          </div>
+                  </div>
           <p className="text-2xl font-semibold text-gray-900">
             {metrics.sales.total.toLocaleString('pt-BR')}
           </p>
@@ -167,8 +167,8 @@ export default function DashboardPage() {
             <span className="text-sm text-gray-600">
               {metrics.sales.conversion}% taxa de conversão
             </span>
-          </div>
-        </div>
+                  </div>
+                </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
@@ -291,7 +291,7 @@ export default function DashboardPage() {
                     : activity.status === 'warning'
                     ? 'Atenção'
                     : 'Erro'}
-                </span>
+          </span>
               )}
             </div>
           ))}

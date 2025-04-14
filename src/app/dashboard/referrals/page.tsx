@@ -252,12 +252,12 @@ export default function ReferralsPage() {
             <h1 className="text-2xl font-bold text-gray-900">Indicações</h1>
             <p className="mt-1 text-sm text-gray-500">
               Gerencie suas indicações e comissões
-            </p>
-          </div>
+          </p>
+        </div>
           <Button>
             Exportar Relatório
-          </Button>
-        </div>
+                    </Button>
+                  </div>
 
         <div className="bg-white rounded-lg shadow">
           <div className="p-4 border-b border-gray-200">
@@ -278,22 +278,22 @@ export default function ReferralsPage() {
                 <option value="approved">Aprovado</option>
                 <option value="rejected">Rejeitado</option>
               </select>
-            </div>
-          </div>
+                  </div>
+                </div>
 
           <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nome</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Comissão</TableHead>
-                  <TableHead>Data</TableHead>
+                        <TableHead>Data</TableHead>
                   <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
                 {filteredReferrals.map((referral) => (
                   <TableRow key={referral.id}>
                     <TableCell>{referral.name}</TableCell>
@@ -305,7 +305,7 @@ export default function ReferralsPage() {
                     </TableCell>
                     <TableCell>R$ {referral.earnings.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
                     <TableCell>{new Date(referral.dateJoined).toLocaleDateString()}</TableCell>
-                    <TableCell>
+                          <TableCell>
                       <div className="flex gap-2">
                         {referral.status === "pending" && (
                           <>
@@ -327,13 +327,13 @@ export default function ReferralsPage() {
                           </>
                         )}
                       </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+              </div>
+            </div>
       </div>
     </DashboardLayout>
   );

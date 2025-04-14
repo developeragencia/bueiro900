@@ -228,13 +228,13 @@ export default function SearchPage() {
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-4 gap-4">
-              <div className="relative">
+                <div className="relative">
                 <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
+                  <Input
                   placeholder="Buscar por URL, título, campanha ou tags..."
                   className="pl-9"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
               </div>
@@ -307,7 +307,7 @@ export default function SearchPage() {
                   />
                 </PopoverContent>
               </Popover>
-            </div>
+              </div>
 
             <div className="mt-4 flex justify-end">
               <Button onClick={handleSearch} disabled={isLoading}>
@@ -319,10 +319,10 @@ export default function SearchPage() {
                 ) : (
                   <>
                     <SearchIcon className="mr-2 h-4 w-4" />
-                    Buscar
+                  Buscar
                   </>
                 )}
-              </Button>
+                </Button>
             </div>
           </CardContent>
         </Card>
@@ -372,12 +372,12 @@ export default function SearchPage() {
                         <Tag className="h-3 w-3" />
                         {result.campaign}
                       </Badge>
-                    </div>
+                  </div>
 
                     <div className="mt-2 flex flex-wrap gap-1">
                       {result.tags.map((tag, index) => (
                         <Badge key={index} variant="outline" className="text-xs">
-                          {tag}
+                              {tag}
                         </Badge>
                       ))}
                     </div>
@@ -403,7 +403,7 @@ export default function SearchPage() {
                       <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
                         Último clique: {format(new Date(result.lastClick), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                      </div>
+                    </div>
                       <Button variant="ghost" size="sm" className="text-primary">
                         <BarChart className="h-4 w-4 mr-1" />
                         Ver análise
@@ -411,8 +411,8 @@ export default function SearchPage() {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+          </CardContent>
+        </Card>
           ))}
         </div>
       </div>

@@ -250,7 +250,7 @@ export default function SalesPage() {
                   {Math.abs(metrics.revenueGrowth)}%
                 </span>
                 <span className="text-gray-500 ml-2">vs. período anterior</span>
-              </div>
+        </div>
             </CardContent>
           </Card>
 
@@ -275,15 +275,15 @@ export default function SalesPage() {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Ticket Médio</CardTitle>
               <TrendingUp className="h-4 w-4 text-gray-500" />
-            </CardHeader>
-            <CardContent>
+          </CardHeader>
+          <CardContent>
               <div className="text-2xl font-bold">{formatCurrency(metrics.averageOrderValue)}</div>
               <div className="flex items-center pt-1 text-sm">
                 <span className="text-gray-500">Taxa de conversão: {metrics.conversionRate}%</span>
-              </div>
-            </CardContent>
+            </div>
+          </CardContent>
           </Card>
-        </div>
+            </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <Card>

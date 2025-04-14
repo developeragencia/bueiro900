@@ -169,9 +169,9 @@ export default function AdminPage() {
   return (
     <div className="p-6">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Painel Administrativo</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Painel Administrativo</h1>
         <p className="text-gray-600 mt-1">Gerencie todos os aspectos do sistema</p>
-      </div>
+            </div>
 
       {/* Métricas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -190,7 +190,7 @@ export default function AdminPage() {
               de {metrics.users.total} registrados
               <span className="text-green-600 ml-2">+{metrics.users.new} novos</span>
             </p>
-          </div>
+                    </div>
         </motion.div>
 
         <motion.div
@@ -202,7 +202,7 @@ export default function AdminPage() {
           <div className="flex items-center justify-between">
             <h3 className="text-gray-500 text-sm font-medium">Permissões</h3>
             <Shield className="h-5 w-5 text-purple-500" />
-          </div>
+                    </div>
           <div className="mt-2">
             <p className="text-2xl font-semibold text-gray-900">{metrics.permissions.roles}</p>
             <p className="text-sm text-gray-500">
@@ -211,7 +211,7 @@ export default function AdminPage() {
                 {metrics.permissions.pendingRequests} pendentes
               </span>
             </p>
-          </div>
+                    </div>
         </motion.div>
 
         <motion.div
@@ -249,11 +249,11 @@ export default function AdminPage() {
               ações hoje
               <span className="text-gray-600 ml-2">
                 {metrics.activity.total} total
-              </span>
+                        </span>
             </p>
-          </div>
+                      </div>
         </motion.div>
-      </div>
+                </div>
 
       {/* Menu de Administração */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

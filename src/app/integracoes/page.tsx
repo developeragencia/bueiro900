@@ -237,7 +237,7 @@ export default function IntegracoesPage() {
             <Plus className="h-4 w-4 mr-2" />
             Nova Integração
           </Button>
-        </div>
+            </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           {PLATFORMS.map(platform => (
@@ -250,7 +250,7 @@ export default function IntegracoesPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <span className="text-2xl mr-2">{platform.icon}</span>
-                    {platform.name}
+              {platform.name}
                   </CardTitle>
                   <CardDescription>
                     Configurar integração com {platform.name}
@@ -376,19 +376,19 @@ export default function IntegracoesPage() {
                   {integration.errorMessage && (
                     <div className="bg-red-50 text-red-800 p-3 rounded-md text-sm">
                       {integration.errorMessage}
-                    </div>
-                  )}
+                  </div>
+                )}
 
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium">API Key</p>
                       <p className="text-gray-600">•••••••••{integration.apiKey.slice(-4)}</p>
-                    </div>
+              </div>
                     <div>
                       <p className="font-medium">Secret Key</p>
                       <p className="text-gray-600">•••••••••{integration.secretKey.slice(-4)}</p>
-                    </div>
-                  </div>
+          </div>
+        </div>
 
                   <div className="text-sm">
                     <p className="font-medium">Webhook URL</p>
@@ -427,7 +427,7 @@ export default function IntegracoesPage() {
                   }}
                   placeholder="Ex: Loja Principal"
                 />
-              </div>
+      </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Plataforma</label>
@@ -452,7 +452,7 @@ export default function IntegracoesPage() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+            </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">API Key</label>
@@ -466,8 +466,8 @@ export default function IntegracoesPage() {
                     }
                   }}
                   placeholder="Chave da API"
-                />
-              </div>
+              />
+            </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Secret Key</label>
@@ -483,7 +483,7 @@ export default function IntegracoesPage() {
                   }}
                   placeholder="Chave secreta"
                 />
-              </div>
+          </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Webhook URL</label>
@@ -498,7 +498,7 @@ export default function IntegracoesPage() {
                   }}
                   placeholder="URL para webhooks"
                 />
-              </div>
+          </div>
 
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setIsEditingIntegration(false)}>

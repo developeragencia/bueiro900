@@ -324,7 +324,7 @@ export function CampaignList({ onEdit, onDelete, onDuplicate }: CampaignListProp
                   Campanha
                   <ArrowUpDown className="h-4 w-4 ml-1" />
                 </button>
-              </div>
+      </div>
               <div className="col-span-2">
                 <button
                   className="flex items-center text-sm font-medium text-gray-600"
@@ -333,7 +333,7 @@ export function CampaignList({ onEdit, onDelete, onDuplicate }: CampaignListProp
                   Plataforma
                   <ArrowUpDown className="h-4 w-4 ml-1" />
                 </button>
-              </div>
+                  </div>
               <div className="col-span-2">
                 <button
                   className="flex items-center text-sm font-medium text-gray-600"
@@ -385,8 +385,8 @@ export function CampaignList({ onEdit, onDelete, onDuplicate }: CampaignListProp
                         <div className="text-xs text-gray-400 mt-1">
                           Criada em {format(campaign.createdAt, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
                         </div>
-                      </div>
-                    </div>
+                  </div>
+                  </div>
                   </div>
                   <div className="col-span-2">
                     <Badge variant="secondary" className={getPlatformColor(campaign.platform)}>
@@ -416,13 +416,13 @@ export function CampaignList({ onEdit, onDelete, onDuplicate }: CampaignListProp
                     </div>
                   </div>
                   <div className="col-span-1 text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
                         <DropdownMenuItem
                           onClick={() => onEdit(campaign)}
                           className="flex items-center gap-2"
@@ -436,30 +436,30 @@ export function CampaignList({ onEdit, onDelete, onDuplicate }: CampaignListProp
                         >
                           <Link2 className="h-4 w-4" />
                           <span>Compartilhar UTMs</span>
-                        </DropdownMenuItem>
+                          </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDuplicateCampaign(campaign)}
                           className="flex items-center gap-2"
                         >
                           <Copy className="h-4 w-4" />
                           <span>Duplicar</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
                           onClick={() => handleDeleteCampaign(campaign.id)}
                           className="flex items-center gap-2 text-red-600"
                         >
                           <Trash2 className="h-4 w-4" />
                           <span>Excluir</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                 </div>
               </motion.div>
             ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
       {selectedCampaign && (
         <UTMShareDialog
@@ -467,7 +467,7 @@ export function CampaignList({ onEdit, onDelete, onDuplicate }: CampaignListProp
           open={isUtmDialogOpen}
           onOpenChange={setIsUtmDialogOpen}
         />
-      )}
-    </div>
+        )}
+      </div>
   );
 }

@@ -108,7 +108,7 @@ export default function UsersPage() {
   });
 
   const filteredUsers = users.filter(user => {
-    const matchesSearch = 
+    const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.phone.includes(searchTerm);
@@ -231,22 +231,22 @@ export default function UsersPage() {
               <DialogTitle>Criar Novo Usuário</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-4">
-              <div>
+                <div>
                 <Input
                   placeholder="Nome completo"
                   value={newUser.name}
                   onChange={e => setNewUser(prev => ({ ...prev, name: e.target.value }))}
                 />
-              </div>
-              <div>
+                </div>
+                <div>
                 <Input
                   placeholder="E-mail"
                   type="email"
                   value={newUser.email}
                   onChange={e => setNewUser(prev => ({ ...prev, email: e.target.value }))}
                 />
-              </div>
-              <div>
+                </div>
+                <div>
                 <Input
                   placeholder="Telefone"
                   value={newUser.phone}
@@ -290,7 +290,7 @@ export default function UsersPage() {
                 <Button onClick={handleCreateUser} disabled={isLoading}>
                   {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                   Criar Usuário
-                </Button>
+              </Button>
               </div>
             </div>
           </DialogContent>
@@ -347,7 +347,7 @@ export default function UsersPage() {
               <div className="hidden md:block">Último Acesso</div>
               <div className="text-right">Ações</div>
             </div>
-          </div>
+                      </div>
           <div className="divide-y">
             {filteredUsers.map(user => (
               <motion.div
@@ -382,7 +382,7 @@ export default function UsersPage() {
                         {getRoleIcon(user.role)}
                         {user.role === 'admin' ? 'Administrador' :
                          user.role === 'manager' ? 'Gerente' : 'Usuário'}
-                      </span>
+                        </span>
                     </Badge>
                   </div>
                   <div className="hidden md:flex items-center">
@@ -434,7 +434,7 @@ export default function UsersPage() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-                </div>
+            </div>
               </motion.div>
             ))}
           </div>

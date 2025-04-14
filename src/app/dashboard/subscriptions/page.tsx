@@ -247,13 +247,13 @@ export default function SubscriptionsPage() {
                 </div>
               </div>
               <div className="space-y-4">
-                <div>
+                      <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium">Próxima cobrança</span>
                     <span className="text-sm text-gray-500">
                       {new Date(subscription.currentPeriodEnd).toLocaleDateString('pt-BR')}
                     </span>
-                  </div>
+                      </div>
                   {subscription.cancelAtPeriodEnd ? (
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                       <div className="flex items-start">
@@ -281,8 +281,8 @@ export default function SubscriptionsPage() {
                     >
                       Cancelar Assinatura
                     </Button>
-                  )}
-                </div>
+                        )}
+                      </div>
 
                 <div>
                   <h4 className="text-sm font-medium mb-2">Uso do Plano</h4>
@@ -296,11 +296,11 @@ export default function SubscriptionsPage() {
                         <Progress value={(item.used / item.limit) * 100} />
                       </div>
                     ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
+                                      </div>
+                                  </div>
+                                </div>
+                          </div>
+                  </CardContent>
         </Card>
 
         {/* Available Plans */}
@@ -310,34 +310,34 @@ export default function SubscriptionsPage() {
             <CardDescription>Escolha o melhor plano para seu negócio</CardDescription>
             <div className="flex items-center justify-end mt-4">
               <div className="bg-gray-100 rounded-lg p-1">
-                <Button
+                        <Button
                   variant={selectedInterval === 'monthly' ? 'default' : 'ghost'}
-                  size="sm"
+                          size="sm"
                   onClick={() => setSelectedInterval('monthly')}
                 >
                   Mensal
-                </Button>
-                <Button
+                        </Button>
+                        <Button
                   variant={selectedInterval === 'yearly' ? 'default' : 'ghost'}
-                  size="sm"
+                          size="sm"
                   onClick={() => setSelectedInterval('yearly')}
                 >
                   Anual
-                </Button>
-              </div>
-            </div>
+                      </Button>
+                      </div>
+          </div>
           </CardHeader>
-          <CardContent>
+            <CardContent>
             <div className="grid md:grid-cols-3 gap-6">
               {plans.map((plan) => (
                 <Card key={plan.id} className={`relative ${plan.isPopular ? 'border-primary' : ''}`}>
                   {plan.isPopular && (
                     <div className="absolute top-0 right-0 -translate-y-1/2 px-3 py-1 bg-primary text-white text-sm font-medium rounded-full">
                       Popular
-                    </div>
-                  )}
-                  <CardHeader>
-                    <CardTitle>{plan.name}</CardTitle>
+                  </div>
+                )}
+                <CardHeader>
+                  <CardTitle>{plan.name}</CardTitle>
                     <CardDescription>
                       R$ {selectedInterval === 'yearly' 
                         ? (plan.price * 0.9 * 12).toFixed(2)
@@ -349,7 +349,7 @@ export default function SubscriptionsPage() {
                         </Badge>
                       )}
                     </CardDescription>
-                  </CardHeader>
+                </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
                       {plan.features.map((feature, index) => (
@@ -359,19 +359,19 @@ export default function SubscriptionsPage() {
                         </li>
                       ))}
                     </ul>
-                  </CardContent>
-                  <CardFooter>
+                </CardContent>
+                <CardFooter>
                     <Button
                       className="w-full"
                       variant={plan.id === subscription.plan.id ? 'outline' : 'default'}
                       disabled={plan.id === subscription.plan.id}
                     >
                       {plan.id === subscription.plan.id ? 'Plano Atual' : 'Escolher Plano'}
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
           </CardContent>
         </Card>
 
@@ -410,13 +410,13 @@ export default function SubscriptionsPage() {
                         </Badge>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <Button
+              <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDownloadInvoice(invoice.id)}
-                        >
+              >
                           <Download className="h-4 w-4" />
-                        </Button>
+              </Button>
                       </td>
                     </tr>
                   ))}

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
+import {
   Search,
   Plus,
   MessageSquare,
@@ -291,9 +291,9 @@ export default function SupportPage() {
             <Dialog open={showNewTicketDialog} onOpenChange={setShowNewTicketDialog}>
               <DialogTrigger asChild>
                 <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Ticket
-                </Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Novo Ticket
+          </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -301,12 +301,12 @@ export default function SupportPage() {
                 </DialogHeader>
                 <div className="space-y-4 mt-4">
                   <div>
-                    <Input
+                <Input
                       placeholder="Título"
                       value={newTicket.title}
                       onChange={e => setNewTicket(prev => ({ ...prev, title: e.target.value }))}
-                    />
-                  </div>
+                />
+              </div>
                   <div>
                     <Textarea
                       placeholder="Descrição do problema"
@@ -321,15 +321,15 @@ export default function SupportPage() {
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione a categoria" />
-                      </SelectTrigger>
-                      <SelectContent>
+                </SelectTrigger>
+                <SelectContent>
                         <SelectItem value="technical">Técnico</SelectItem>
                         <SelectItem value="billing">Faturamento</SelectItem>
                         <SelectItem value="account">Conta</SelectItem>
                         <SelectItem value="other">Outro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                </SelectContent>
+              </Select>
+            </div>
                   <div className="flex justify-end space-x-2">
                     <Button variant="outline" onClick={() => setShowNewTicketDialog(false)}>
                       Cancelar
@@ -338,11 +338,11 @@ export default function SupportPage() {
                       {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                       Criar Ticket
                     </Button>
-                  </div>
+                          </div>
                 </div>
               </DialogContent>
             </Dialog>
-          </div>
+                          </div>
 
           <Card className="p-4 mb-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -356,8 +356,8 @@ export default function SupportPage() {
                     onChange={e => setSearchTerm(e.target.value)}
                   />
                 </div>
-              </div>
-              <div className="flex gap-2">
+                          </div>
+                          <div className="flex gap-2">
                 <Select value={statusFilter} onValueChange={value => setStatusFilter(value as Ticket['status'] | 'all')}>
                   <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Filtrar por status" />
@@ -383,14 +383,14 @@ export default function SupportPage() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-          </Card>
+                          </div>
+                      </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white rounded-lg shadow overflow-hidden">
               <div className="p-4 border-b">
                 <h2 className="font-semibold">Lista de Tickets</h2>
-              </div>
+                </div>
               <div className="divide-y max-h-[600px] overflow-y-auto">
                 {filteredTickets.map(ticket => (
                   <motion.div
@@ -403,21 +403,21 @@ export default function SupportPage() {
                     onClick={() => setSelectedTicket(ticket)}
                   >
                     <div className="flex items-start justify-between">
-                      <div>
+                  <div>
                         <h3 className="font-medium">{ticket.title}</h3>
                         <p className="text-sm text-gray-500 mt-1">{ticket.description}</p>
-                      </div>
+                  </div>
                       <Badge variant="secondary" className={getStatusColor(ticket.status)}>
                         {ticket.status === 'open' ? 'Aberto' :
                          ticket.status === 'in_progress' ? 'Em Andamento' :
                          ticket.status === 'resolved' ? 'Resolvido' : 'Fechado'}
                       </Badge>
-                    </div>
+                  </div>
                     <div className="flex items-center gap-4 mt-2">
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="h-4 w-4 mr-1" />
                         {format(ticket.createdAt, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                      </div>
+                </div>
                       <Badge variant="secondary" className={getPriorityColor(ticket.priority)}>
                         {ticket.priority === 'urgent' ? 'Urgente' :
                          ticket.priority === 'high' ? 'Alta' :
@@ -427,7 +427,7 @@ export default function SupportPage() {
                   </motion.div>
                 ))}
               </div>
-            </div>
+                        </div>
 
             <div className="bg-white rounded-lg shadow overflow-hidden">
               {selectedTicket ? (
@@ -447,7 +447,7 @@ export default function SupportPage() {
                   </div>
                   <div className="flex flex-col h-[500px]">
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                      {selectedTicket.messages.map(message => (
+                  {selectedTicket.messages.map(message => (
                         <motion.div
                           key={message.id}
                           initial={{ opacity: 0, y: 10 }}
@@ -464,7 +464,7 @@ export default function SupportPage() {
                                 message.isStaff ? 'bg-gray-100' : 'bg-blue-500 text-white'
                               }`}>
                                 <p>{message.content}</p>
-                              </div>
+                      </div>
                               <div className={`text-xs text-gray-500 mt-1 ${
                                 message.isStaff ? 'text-left' : 'text-right'
                               }`}>
@@ -494,8 +494,8 @@ export default function SupportPage() {
                             <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
                             <Send className="h-4 w-4" />
-                          )}
-                        </Button>
+                        )}
+                      </Button>
                       </div>
                     </div>
                   </div>
@@ -514,14 +514,14 @@ export default function SupportPage() {
             <h1 className="text-2xl font-bold mb-4">Perguntas Frequentes</h1>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
+                <Input
                 placeholder="Buscar nas FAQs..."
                 className="pl-10"
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-              />
+                />
+              </div>
             </div>
-          </div>
 
           <div className="space-y-4">
             {faqs.map(faq => (
@@ -559,6 +559,6 @@ export default function SupportPage() {
           </div>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
   );
 }
