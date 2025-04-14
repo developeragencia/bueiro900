@@ -1,295 +1,382 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import {
+  Mail,
+  Lock,
+  User,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  Loader2,
+  Github,
+  Facebook,
+  Google,
+  ArrowLeft
+} from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from 'sonner';
-import { Eye, EyeOff, Loader2, RocketIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useAppStore } from '@/lib/store';
+import { Separator } from "@/components/ui/separator";
 
-// Schema de validação
-const registerSchema = z.object({
-  name: z.string().min(3, 'O nome deve ter no mínimo 3 caracteres'),
-  email: z.string().email('Email inválido'),
-  password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
-  confirmPassword: z.string(),
-  terms: z.boolean().refine(val => val === true, {
-    message: 'Você deve aceitar os termos e condições'
-  }),
-}).refine(data => data.password === data.confirmPassword, {
-  message: "As senhas não conferem",
-  path: ["confirmPassword"],
-});
+interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  acceptTerms: boolean;
+}
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
-
-export default function Register() {
-  const [isLoading, setIsLoading] = useState(false);
+export default function RegisterPage() {
+  const router = useRouter();
+  const [formData, setFormData] = useState<RegisterData>({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    acceptTerms: false
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [stars, setStars] = useState<{ id: string; top: string; left: string; width: string; height: string; opacity: number }[]>([]);
-  const [mounted, setMounted] = useState(false);
-  const router = useRouter();
-  const register = useAppStore(state => state.register);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Partial<RegisterData>>({});
 
-  // Gerar estrelas para o fundo
-  useEffect(() => {
-    // Apenas gerar estrelas e ativar animações após a montagem completa no cliente
-    const generatedStars = Array.from({ length: 50 }).map((_, i) => ({
-      id: `star-${i}-${Math.random()}`,
-      top: `${Math.random() * 100}%`,
-      left: `${Math.random() * 100}%`,
-      width: `${Math.random() * 2 + 1}px`,
-      height: `${Math.random() * 2 + 1}px`,
-      opacity: Math.random() * 0.7 + 0.3
-    }));
+  const validateForm = () => {
+    const newErrors: Partial<RegisterData> = {};
 
-    setStars(generatedStars);
-    setMounted(true);
-  }, []);
+    if (!formData.name) {
+      newErrors.name = 'Nome é obrigatório';
+    }
 
-  // Configurar react-hook-form
-  const {
-    register: registerField,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      terms: false,
-    },
-  });
+    if (!formData.email) {
+      newErrors.email = 'Email é obrigatório';
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
+      newErrors.email = 'Email inválido';
+    }
 
-  const onSubmit = async (data: RegisterFormValues) => {
+    if (!formData.password) {
+      newErrors.password = 'Senha é obrigatória';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Senha deve ter no mínimo 6 caracteres';
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Confirmação de senha é obrigatória';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'As senhas não coincidem';
+    }
+
+    if (!formData.acceptTerms) {
+      newErrors.acceptTerms = 'Você deve aceitar os termos de uso';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+
     setIsLoading(true);
 
     try {
-      await register(data.name, data.email, data.password);
+      // Simula chamada à API de registro
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Aqui você implementaria a chamada real à sua API de registro
+      // const response = await fetch('/api/auth/register', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(formData)
+      // });
+      
+      // if (!response.ok) throw new Error('Erro ao criar conta');
+      
+      // const data = await response.json();
+      // localStorage.setItem('token', data.token);
+
       toast.success('Conta criada com sucesso!');
       router.push('/dashboard');
     } catch (error) {
-      console.error(error);
-      toast.error('Falha ao criar conta. Tente novamente.');
+      toast.error('Erro ao criar conta. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSocialRegister = async (provider: 'google' | 'facebook' | 'github') => {
+    setIsLoading(true);
+
+    try {
+      // Aqui você implementaria o registro social usando a SDK apropriada
+      // Por exemplo, para Google:
+      // await signUpWithGoogle();
+      
+      // Para Facebook:
+      // await signUpWithFacebook();
+      
+      // Para Github:
+      // await signUpWithGithub();
+
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      toast.success(`Conta criada com ${provider} com sucesso!`);
+      router.push('/dashboard');
+    } catch (error) {
+      toast.error(`Erro ao criar conta com ${provider}`);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-r from-blue-900 to-indigo-800 text-white relative overflow-hidden">
-      {/* Animated stars in background */}
-      <div className="absolute inset-0">
-        {stars.map((star) => (
-          <div
-            key={star.id}
-            className="star absolute bg-white rounded-full"
-            style={{
-              top: star.top,
-              left: star.left,
-              width: star.width,
-              height: star.height,
-              opacity: star.opacity,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Decorative planet shapes */}
-      <div className="absolute top-[15%] left-[10%] w-40 h-40 rounded-full bg-gradient-to-br from-purple-500 to-purple-800 opacity-20 blur-md" />
-      <div className="absolute bottom-[10%] right-[15%] w-60 h-60 rounded-full bg-gradient-to-br from-blue-400 to-blue-700 opacity-20 blur-md" />
-
-      <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center justify-center gap-8 relative z-10">
-        <div className="lg:w-2/5 flex flex-col items-center lg:items-start">
-          {/* Animated rocket logo */}
-          <div className="relative h-48 w-48 mb-6">
-            <div className="flex items-center justify-center h-full w-full relative">
-              <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-36 h-36 bg-blue-500/20 rounded-full ${mounted ? 'animate-pulse' : ''}`} />
-              <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-indigo-500/20 rounded-full ${mounted ? 'animate-pulse' : ''}`} style={{ animationDelay: '1s' }} />
-
-              <RocketIcon
-                className={`text-white h-20 w-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${mounted ? 'animate-float' : ''}`}
-              />
-
-              <div className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-14 bg-gradient-to-t from-orange-500 to-transparent rounded-full ${mounted ? 'animate-flame' : ''}`} />
-            </div>
-          </div>
-
-          <h1 className="text-3xl lg:text-4xl font-bold text-center lg:text-left">Bueiro Digital</h1>
-          <p className="text-blue-100 mt-3 mb-6 text-center lg:text-left">Crie sua conta e comece a rastrear seus links</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md w-full space-y-8"
+      >
+        <div className="flex items-center">
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="absolute top-4 left-4"
+          >
+            <ArrowLeft className="h-5 w-5 mr-2" />
+            Voltar
+          </Button>
         </div>
 
-        <div className="lg:w-3/5 w-full max-w-md">
-          <div className="bg-white shadow-xl rounded-2xl p-8 text-gray-900">
-            <h2 className="text-2xl font-bold mb-6 text-center">Criar conta</h2>
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Crie sua conta
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Comece sua jornada conosco
+          </p>
+        </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Nome completo
-                  </label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Seu nome"
-                    {...registerField('name')}
-                    className={errors.name ? 'border-red-500' : 'border-gray-300'}
-                  />
-                  {errors.name && (
-                    <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
-                  )}
+        <Card>
+          <CardHeader>
+            <CardTitle>Cadastro</CardTitle>
+            <CardDescription>
+              Escolha como deseja se cadastrar
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => handleSocialRegister('google')}
+                disabled={isLoading}
+              >
+                <Google className="h-5 w-5 mr-2" />
+                Cadastrar com Google
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => handleSocialRegister('facebook')}
+                disabled={isLoading}
+              >
+                <Facebook className="h-5 w-5 mr-2" />
+                Cadastrar com Facebook
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => handleSocialRegister('github')}
+                disabled={isLoading}
+              >
+                <Github className="h-5 w-5 mr-2" />
+                Cadastrar com Github
+              </Button>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
                 </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    {...registerField('email')}
-                    className={errors.email ? 'border-red-500' : 'border-gray-300'}
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-                  )}
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Ou cadastre-se com email
+                  </span>
                 </div>
+              </div>
 
-                <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                    Senha
-                  </label>
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
                   <div className="relative">
+                    <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
-                      {...registerField('password')}
-                      className={errors.password ? 'border-red-500' : 'border-gray-300'}
+                      type="text"
+                      placeholder="Seu nome completo"
+                      className="pl-10"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
+                  </div>
+                  {errors.name && (
+                    <p className="text-sm text-red-500 flex items-center">
+                      <AlertCircle className="h-4 w-4 mr-1" />
+                      {errors.name}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <Input
+                      type="email"
+                      placeholder="Seu email"
+                      className="pl-10"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="text-sm text-red-500 flex items-center">
+                      <AlertCircle className="h-4 w-4 mr-1" />
+                      {errors.email}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Sua senha"
+                      className="pl-10"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                    <p className="text-sm text-red-500 flex items-center">
+                      <AlertCircle className="h-4 w-4 mr-1" />
+                      {errors.password}
+                    </p>
                   )}
                 </div>
 
-                <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                    Confirme a senha
-                  </label>
+                <div className="space-y-2">
                   <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <Input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
-                      {...registerField('confirmPassword')}
-                      className={errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirme sua senha"
+                      className="pl-10"
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                     >
-                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
                   {errors.confirmPassword && (
-                    <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>
+                    <p className="text-sm text-red-500 flex items-center">
+                      <AlertCircle className="h-4 w-4 mr-1" />
+                      {errors.confirmPassword}
+                    </p>
                   )}
                 </div>
 
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <Checkbox id="terms" {...registerField('terms')} />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label htmlFor="terms" className="text-gray-700">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="terms"
+                      checked={formData.acceptTerms}
+                      onCheckedChange={(checked) => 
+                        setFormData({ ...formData, acceptTerms: checked as boolean })
+                      }
+                    />
+                    <label
+                      htmlFor="terms"
+                      className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
                       Aceito os{' '}
-                      <Link href="/terms" className="text-blue-600 hover:underline">
-                        termos e condições
+                      <Link href="/terms" className="text-primary hover:underline">
+                        termos de uso
+                      </Link>
+                      {' '}e{' '}
+                      <Link href="/privacy" className="text-primary hover:underline">
+                        política de privacidade
                       </Link>
                     </label>
-                    {errors.terms && (
-                      <p className="text-red-500 text-xs mt-1">{errors.terms.message}</p>
-                    )}
                   </div>
+                  {errors.acceptTerms && (
+                    <p className="text-sm text-red-500 flex items-center">
+                      <AlertCircle className="h-4 w-4 mr-1" />
+                      {errors.acceptTerms}
+                    </p>
+                  )}
                 </div>
-              </div>
 
-              <Button type="submit" className="w-full h-11 bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Criando conta...
-                  </>
-                ) : (
-                  'Criar conta'
-                )}
-              </Button>
-
-              <div className="mt-4 text-center">
-                <p className="text-sm text-gray-600">
-                  Já tem uma conta?{' '}
-                  <Link href="/login" className="text-blue-600 hover:underline">
-                    Faça login
-                  </Link>
-                </p>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      {/* Custom CSS para animações que só serão aplicadas quando o componente estiver montado */}
-      {mounted && (
-        <style jsx>{`
-          @keyframes twinkle {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-          }
-
-          .star {
-            animation: twinkle linear infinite;
-            animation-duration: calc(5s + (var(--i, 0) * 0.5s));
-          }
-
-          @keyframes float {
-            0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
-            50% { transform: translate(-50%, -50%) translateY(-10px); }
-          }
-
-          .animate-float {
-            animation: float 6s ease-in-out infinite;
-          }
-
-          @keyframes flame {
-            0%, 100% { height: 14px; opacity: 0.8; }
-            50% { height: 18px; opacity: 1; }
-          }
-
-          .animate-flame {
-            animation: flame 0.5s ease-in-out infinite;
-          }
-        `}</style>
-      )}
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Criando conta...
+                    </>
+                  ) : (
+                    'Criar conta'
+                  )}
+                </Button>
+              </form>
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-4">
+            <Separator />
+            <p className="text-sm text-center text-gray-600">
+              Já tem uma conta?{' '}
+              <Link href="/login" className="text-primary hover:underline">
+                Faça login
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
+      </motion.div>
     </div>
   );
 }

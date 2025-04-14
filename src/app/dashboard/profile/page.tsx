@@ -1,7 +1,22 @@
 "use client";
 
 import { useState } from 'react';
-import { User, Mail, Phone, Building, MapPin, Save } from 'lucide-react';
+import { motion } from 'framer-motion';
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Lock,
+  Camera,
+  Shield,
+  Bell,
+  Key,
+  LogOut,
+  CheckCircle,
+  AlertTriangle
+} from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,63 +30,172 @@ import { useAppStore } from '@/lib/store';
 import DashboardLayout from '@/components/DashboardLayout';
 import { toast } from 'sonner';
 
+interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  location: string;
+  birthDate: string;
+  role: "admin" | "editor" | "viewer";
+  avatar?: string;
+  createdAt: string;
+  lastLogin: string;
+}
+
+interface SecuritySettings {
+  twoFactorEnabled: boolean;
+  lastPasswordChange: string;
+  loginNotifications: boolean;
+  securityAlerts: boolean;
+}
+
+interface NotificationPreferences {
+  email: boolean;
+  push: boolean;
+  sms: boolean;
+  marketing: boolean;
+  updates: boolean;
+  security: boolean;
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  avatar?: string;
+  role: "admin" | "editor" | "viewer";
+}
+
+const mockProfile: UserProfile = {
+  id: '1',
+  name: 'João Silva',
+  email: 'joao.silva@exemplo.com',
+  phone: '+55 11 98765-4321',
+  location: 'São Paulo, SP',
+  birthDate: '1990-05-15',
+  role: 'admin',
+  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John',
+  createdAt: '2024-01-01T10:00:00',
+  lastLogin: '2024-03-18T15:30:00'
+};
+
+const mockSecuritySettings: SecuritySettings = {
+  twoFactorEnabled: true,
+  lastPasswordChange: '2024-02-15T14:30:00',
+  loginNotifications: true,
+  securityAlerts: true
+};
+
+const mockNotificationPreferences: NotificationPreferences = {
+  email: true,
+  push: true,
+  sms: false,
+  marketing: false,
+  updates: true,
+  security: true
+};
+
 export default function ProfilePage() {
   const { user } = useAppStore(state => state.auth);
   const updateUser = useAppStore(state => state.updateUser);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
-
-  const [formData, setFormData] = useState({
-    name: user?.name || 'Usuário',
-    email: user?.email || 'usuario@example.com',
-    phone: user?.phone || '(11) 98765-4321',
-    company: user?.company || 'Minha Empresa',
-    address: user?.address || 'Rua Example, 123',
-    city: user?.city || 'São Paulo',
-    state: user?.state || 'SP',
-    zipcode: user?.zipcode || '01234-567',
-    bio: user?.bio || 'Profissional especializado em marketing digital e criação de campanhas.',
-    emailNotifications: user?.emailNotifications || true,
-    smsNotifications: user?.smsNotifications || false,
-    twoFactorAuth: user?.twoFactorAuth || false
-  });
+  const [profile, setProfile] = useState<UserProfile>(mockProfile);
+  const [security, setSecurity] = useState<SecuritySettings>(mockSecuritySettings);
+  const [notifications, setNotifications] = useState<NotificationPreferences>(mockNotificationPreferences);
+  const [editedProfile, setEditedProfile] = useState<UserProfile>(profile);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setEditedProfile((prev: UserProfile) => ({ ...prev, [name]: value }));
   };
 
   const handleSwitchChange = (name: string, checked: boolean) => {
-    setFormData(prev => ({ ...prev, [name]: checked }));
+    setNotifications(prev => ({ ...prev, [name]: checked }));
   };
 
   const toggleEdit = () => {
     setIsEditing(!isEditing);
+    setEditedProfile(profile);
   };
 
   const handleSave = async () => {
-    if (!user) return;
-
-    setIsSaving(true);
+    if (!user) {
+      toast.error('Usuário não encontrado');
+      return;
+    }
+    
     try {
+      setIsSaving(true);
+      
       // Update user data in store - only include fields that are in the User interface
       await updateUser(user.id, {
-        name: formData.name,
-        email: formData.email,
+        name: editedProfile.name,
+        email: editedProfile.email,
+        role: editedProfile.role as "admin" | "editor" | "viewer"
       });
-
-      // Show success notification
-      toast.success('Alterações salvas com sucesso!');
 
       // Exit edit mode
       setIsEditing(false);
+      setProfile(editedProfile);
+      toast.success('Perfil atualizado com sucesso!');
     } catch (error) {
       console.error('Error saving profile:', error);
-      toast.error('Erro ao salvar alterações. Tente novamente.');
+      toast.error('Erro ao atualizar perfil. Tente novamente.');
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      setPasswordError('As senhas não coincidem');
+      return;
+    }
+
+    try {
+      // Aqui você implementaria a chamada à API para alterar a senha
+      setShowPasswordModal(false);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setPasswordError('');
+      setSuccessMessage('Senha alterada com sucesso!');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Erro ao alterar senha:', error);
+      setPasswordError('Erro ao alterar senha. Tente novamente.');
+    }
+  };
+
+  const handleToggleTwoFactor = async () => {
+    try {
+      // Aqui você implementaria a chamada à API para ativar/desativar 2FA
+      setSecurity({
+        ...security,
+        twoFactorEnabled: !security.twoFactorEnabled
+      });
+      setSuccessMessage('Configuração de 2FA atualizada com sucesso!');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Erro ao atualizar 2FA:', error);
+    }
+  };
+
+  const handleNotificationChange = (type: keyof NotificationPreferences) => {
+    setNotifications({
+      ...notifications,
+      [type]: !notifications[type]
+    });
   };
 
   return (
@@ -87,11 +211,11 @@ export default function ProfilePage() {
           <Card className="h-fit lg:col-span-1">
             <CardContent className="p-6 flex flex-col items-center">
               <Avatar className="h-24 w-24 mb-4">
-                <AvatarImage src={user?.avatar || ''} alt={formData.name} />
-                <AvatarFallback className="bg-primary text-white text-xl">{formData.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={profile.avatar || ''} alt={profile.name} />
+                <AvatarFallback className="bg-primary text-white text-xl">{profile.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              <h2 className="text-xl font-semibold text-gray-900">{formData.name}</h2>
-              <p className="text-gray-500 text-sm mb-4">{formData.email}</p>
+              <h2 className="text-xl font-semibold text-gray-900">{profile.name}</h2>
+              <p className="text-gray-500 text-sm mb-4">{profile.email}</p>
 
               <div className="w-full mt-2">
                 <Button
@@ -117,10 +241,7 @@ export default function ProfilePage() {
                         Salvando...
                       </>
                     ) : (
-                      <>
-                        <Save className="mr-2 h-4 w-4" />
-                        Salvar Alterações
-                      </>
+                      'Salvar Alterações'
                     )}
                   </Button>
                 )}
@@ -131,19 +252,15 @@ export default function ProfilePage() {
               <div className="w-full space-y-2">
                 <div className="flex items-center text-sm">
                   <Mail className="h-4 w-4 mr-2 text-gray-500" />
-                  <span>{formData.email}</span>
+                  <span>{profile.email}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Phone className="h-4 w-4 mr-2 text-gray-500" />
-                  <span>{formData.phone}</span>
-                </div>
-                <div className="flex items-center text-sm">
-                  <Building className="h-4 w-4 mr-2 text-gray-500" />
-                  <span>{formData.company}</span>
+                  <span>{profile.phone}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                  <span>{formData.city}, {formData.state}</span>
+                  <span>{profile.location}</span>
                 </div>
               </div>
             </CardContent>
@@ -171,7 +288,7 @@ export default function ProfilePage() {
                         <Input
                           id="name"
                           name="name"
-                          value={formData.name}
+                          value={editedProfile.name}
                           onChange={handleInputChange}
                           disabled={!isEditing}
                         />
@@ -182,7 +299,7 @@ export default function ProfilePage() {
                           id="email"
                           name="email"
                           type="email"
-                          value={formData.email}
+                          value={editedProfile.email}
                           onChange={handleInputChange}
                           disabled={!isEditing}
                         />
@@ -192,17 +309,17 @@ export default function ProfilePage() {
                         <Input
                           id="phone"
                           name="phone"
-                          value={formData.phone}
+                          value={editedProfile.phone}
                           onChange={handleInputChange}
                           disabled={!isEditing}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="company">Empresa</Label>
+                        <Label htmlFor="location">Localização</Label>
                         <Input
-                          id="company"
-                          name="company"
-                          value={formData.company}
+                          id="location"
+                          name="location"
+                          value={editedProfile.location}
                           onChange={handleInputChange}
                           disabled={!isEditing}
                         />
@@ -210,57 +327,24 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="address">Endereço</Label>
+                      <Label htmlFor="birthDate">Data de Nascimento</Label>
                       <Input
-                        id="address"
-                        name="address"
-                        value={formData.address}
+                        id="birthDate"
+                        name="birthDate"
+                        type="date"
+                        value={editedProfile.birthDate}
                         onChange={handleInputChange}
                         disabled={!isEditing}
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="city">Cidade</Label>
-                        <Input
-                          id="city"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleInputChange}
-                          disabled={!isEditing}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="state">Estado</Label>
-                        <Input
-                          id="state"
-                          name="state"
-                          value={formData.state}
-                          onChange={handleInputChange}
-                          disabled={!isEditing}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="zipcode">CEP</Label>
-                        <Input
-                          id="zipcode"
-                          name="zipcode"
-                          value={formData.zipcode}
-                          onChange={handleInputChange}
-                          disabled={!isEditing}
-                        />
-                      </div>
-                    </div>
-
                     <div className="space-y-2">
-                      <Label htmlFor="bio">Biografia</Label>
-                      <Textarea
-                        id="bio"
-                        name="bio"
-                        value={formData.bio}
+                      <Label htmlFor="role">Função</Label>
+                      <Input
+                        id="role"
+                        name="role"
+                        value={editedProfile.role}
                         onChange={handleInputChange}
-                        rows={4}
                         disabled={!isEditing}
                       />
                     </div>
@@ -292,8 +376,8 @@ export default function ProfilePage() {
                           <p className="text-sm text-gray-500">Adicione uma camada extra de segurança à sua conta</p>
                         </div>
                         <Switch
-                          checked={formData.twoFactorAuth}
-                          onCheckedChange={(checked) => handleSwitchChange('twoFactorAuth', checked)}
+                          checked={security.twoFactorEnabled}
+                          onCheckedChange={handleToggleTwoFactor}
                           disabled={!isEditing}
                         />
                       </div>
@@ -335,10 +419,10 @@ export default function ProfilePage() {
                   {isEditing && (
                     <CardFooter className="border-t bg-gray-50 flex justify-end">
                       <Button
-                        onClick={handleSave}
+                        onClick={() => setShowPasswordModal(true)}
                         disabled={isSaving}
                       >
-                        {isSaving ? 'Salvando...' : 'Salvar Alterações'}
+                        {isSaving ? 'Salvando...' : 'Alterar Senha'}
                       </Button>
                     </CardFooter>
                   )}
@@ -359,8 +443,8 @@ export default function ProfilePage() {
                           <p className="text-sm text-gray-500">Receba atualizações por e-mail</p>
                         </div>
                         <Switch
-                          checked={formData.emailNotifications}
-                          onCheckedChange={(checked) => handleSwitchChange('emailNotifications', checked)}
+                          checked={notifications.email}
+                          onCheckedChange={() => handleNotificationChange('email')}
                           disabled={!isEditing}
                         />
                       </div>
@@ -373,13 +457,13 @@ export default function ProfilePage() {
                           <p className="text-sm text-gray-500">Receba alertas por mensagem de texto</p>
                         </div>
                         <Switch
-                          checked={formData.smsNotifications}
-                          onCheckedChange={(checked) => handleSwitchChange('smsNotifications', checked)}
+                          checked={notifications.sms}
+                          onCheckedChange={() => handleNotificationChange('sms')}
                           disabled={!isEditing}
                         />
                       </div>
 
-                      {formData.emailNotifications && (
+                      {notifications.email && (
                         <>
                           <Separator />
 
@@ -432,6 +516,78 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Alteração de Senha */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Alterar Senha</h3>
+            
+            {passwordError && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                <div className="flex items-center">
+                  <AlertTriangle className="h-5 w-5 mr-2" />
+                  {passwordError}
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Senha Atual
+                </label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nova Senha
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirmar Nova Senha
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end space-x-4">
+              <button
+                onClick={() => setShowPasswordModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handlePasswordChange}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                disabled={!currentPassword || !newPassword || !confirmPassword}
+              >
+                Alterar Senha
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }

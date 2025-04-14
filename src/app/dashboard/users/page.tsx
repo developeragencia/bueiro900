@@ -1,568 +1,445 @@
 "use client";
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
 import {
-  Users,
   Search,
   Plus,
-  Filter,
   MoreVertical,
-  Edit,
+  Pencil,
   Trash2,
   CheckCircle,
   XCircle,
-  ShieldAlert,
-  Download,
-  UserPlus,
+  Filter,
+  Loader2,
   Mail,
-  Calendar,
-  Lock
+  Phone,
+  UserPlus,
+  Shield,
+  User
 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import DashboardLayout from '@/components/DashboardLayout';
 
-// User type definition
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'editor' | 'viewer';
+  phone: string;
+  role: 'admin' | 'manager' | 'user';
   status: 'active' | 'inactive' | 'pending';
-  lastActive: string;
-  dateCreated: string;
+  avatar?: string;
+  lastLogin?: Date;
+  createdAt: Date;
 }
 
-// Sample users data
-const USERS: User[] = [
+interface UserFormData {
+  name: string;
+  email: string;
+  phone: string;
+  role: User['role'];
+  status: User['status'];
+}
+
+const MOCK_USERS: User[] = [
   {
-    id: 'usr001',
+    id: '1',
     name: 'João Silva',
     email: 'joao.silva@email.com',
+    phone: '(11) 99999-9999',
     role: 'admin',
     status: 'active',
-    lastActive: '2023-09-15 13:45:22',
-    dateCreated: '2022-05-10 09:30:00'
+    avatar: 'https://github.com/shadcn.png',
+    lastLogin: new Date('2024-03-20T10:00:00'),
+    createdAt: new Date('2024-01-01')
   },
   {
-    id: 'usr002',
-    name: 'Maria Oliveira',
-    email: 'maria.oliveira@email.com',
-    role: 'editor',
+    id: '2',
+    name: 'Maria Santos',
+    email: 'maria.santos@email.com',
+    phone: '(11) 98888-8888',
+    role: 'manager',
     status: 'active',
-    lastActive: '2023-09-14 16:23:45',
-    dateCreated: '2022-06-15 11:45:00'
+    lastLogin: new Date('2024-03-19T15:30:00'),
+    createdAt: new Date('2024-01-15')
   },
   {
-    id: 'usr003',
-    name: 'Carlos Santos',
-    email: 'carlos.santos@email.com',
-    role: 'viewer',
-    status: 'active',
-    lastActive: '2023-09-12 10:15:33',
-    dateCreated: '2022-07-23 13:20:00'
-  },
-  {
-    id: 'usr004',
-    name: 'Ana Pereira',
-    email: 'ana.pereira@email.com',
-    role: 'editor',
+    id: '3',
+    name: 'Pedro Costa',
+    email: 'pedro.costa@email.com',
+    phone: '(11) 97777-7777',
+    role: 'user',
     status: 'inactive',
-    lastActive: '2023-08-30 14:05:12',
-    dateCreated: '2022-08-05 15:10:00'
-  },
-  {
-    id: 'usr005',
-    name: 'Pedro Souza',
-    email: 'pedro.souza@email.com',
-    role: 'viewer',
-    status: 'pending',
-    lastActive: 'Nunca',
-    dateCreated: '2023-09-10 08:30:00'
-  },
-  {
-    id: 'usr006',
-    name: 'Fernanda Lima',
-    email: 'fernanda.lima@email.com',
-    role: 'editor',
-    status: 'active',
-    lastActive: '2023-09-15 09:34:56',
-    dateCreated: '2022-10-18 14:25:00'
-  },
-  {
-    id: 'usr007',
-    name: 'Ricardo Gomes',
-    email: 'ricardo.gomes@email.com',
-    role: 'viewer',
-    status: 'active',
-    lastActive: '2023-09-14 15:42:11',
-    dateCreated: '2023-02-07 10:40:00'
-  },
+    avatar: 'https://github.com/shadcn.png',
+    lastLogin: new Date('2024-03-15T08:45:00'),
+    createdAt: new Date('2024-02-01')
+  }
 ];
-
-// Role definitions with permissions
-const ROLES = [
-  {
-    id: 'admin',
-    name: 'Administrador',
-    description: 'Acesso completo a todas as funcionalidades',
-    permissions: [
-      'gerenciar_usuarios',
-      'gerenciar_campanhas',
-      'gerenciar_integrações',
-      'gerenciar_configuracoes',
-      'ver_relatorios',
-      'exportar_dados'
-    ]
-  },
-  {
-    id: 'editor',
-    name: 'Editor',
-    description: 'Pode editar campanhas e visualizar relatórios',
-    permissions: [
-      'gerenciar_campanhas',
-      'ver_relatorios',
-      'exportar_dados'
-    ]
-  },
-  {
-    id: 'viewer',
-    name: 'Visualizador',
-    description: 'Acesso somente para visualização',
-    permissions: [
-      'ver_relatorios'
-    ]
-  },
-];
-
-// User stats
-const USER_STATS = {
-  total: 7,
-  active: 5,
-  inactive: 1,
-  pending: 1,
-  admins: 1,
-  editors: 3,
-  viewers: 3,
-  newThisMonth: 2
-};
 
 export default function UsersPage() {
+  const [users, setUsers] = useState<User[]>(MOCK_USERS);
   const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [showRoleInfo, setShowRoleInfo] = useState(false);
+  const [roleFilter, setRoleFilter] = useState<User['role'] | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<User['status'] | 'all'>('all');
+  const [showNewUserDialog, setShowNewUserDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [newUser, setNewUser] = useState<UserFormData>({
+    name: '',
+    email: '',
+    phone: '',
+    role: 'user',
+    status: 'active'
+  });
 
-  // Filter users based on search and filters
-  const filteredUsers = USERS.filter(user => {
-    const matchesSearch =
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = 
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
-
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.phone.includes(searchTerm);
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-
     return matchesSearch && matchesRole && matchesStatus;
   });
 
-  // Toggle user selection
-  const toggleUserSelection = (userId: string) => {
-    if (selectedUsers.includes(userId)) {
-      setSelectedUsers(selectedUsers.filter(id => id !== userId));
-    } else {
-      setSelectedUsers([...selectedUsers, userId]);
+  const handleCreateUser = async () => {
+    try {
+      setIsLoading(true);
+      // Simulando chamada à API
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      const newUserData: User = {
+        id: Math.random().toString(36).substr(2, 9),
+        ...newUser,
+        createdAt: new Date(),
+      };
+
+      setUsers(prev => [...prev, newUserData]);
+      setShowNewUserDialog(false);
+      setNewUser({
+        name: '',
+        email: '',
+        phone: '',
+        role: 'user',
+        status: 'active'
+      });
+      toast.success('Usuário criado com sucesso!');
+    } catch (error) {
+      toast.error('Erro ao criar usuário. Tente novamente.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Select all visible users
-  const toggleSelectAll = () => {
-    if (selectedUsers.length === filteredUsers.length) {
-      setSelectedUsers([]);
-    } else {
-      setSelectedUsers(filteredUsers.map(user => user.id));
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      setIsLoading(true);
+      // Simulando chamada à API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      setUsers(prev => prev.filter(user => user.id !== userId));
+      toast.success('Usuário excluído com sucesso!');
+    } catch (error) {
+      toast.error('Erro ao excluir usuário. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (userId: string) => {
+    try {
+      setIsLoading(true);
+      // Simulando chamada à API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      setUsers(prev => prev.map(user => {
+        if (user.id === userId) {
+          const newStatus: User['status'] = user.status === 'active' ? 'inactive' : 'active';
+          return { ...user, status: newStatus };
+        }
+        return user;
+      }));
+      toast.success('Status do usuário atualizado com sucesso!');
+    } catch (error) {
+      toast.error('Erro ao atualizar status do usuário. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getRoleIcon = (role: User['role']) => {
+    switch (role) {
+      case 'admin':
+        return <Shield className="h-4 w-4" />;
+      case 'manager':
+        return <UserPlus className="h-4 w-4" />;
+      default:
+        return <User className="h-4 w-4" />;
+    }
+  };
+
+  const getRoleColor = (role: User['role']) => {
+    switch (role) {
+      case 'admin':
+        return 'bg-purple-100 text-purple-800';
+      case 'manager':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusColor = (status: User['status']) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'inactive':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-yellow-100 text-yellow-800';
     }
   };
 
   return (
-    <DashboardLayout>
-      <div className="container mx-auto py-6 px-4 lg:px-8">
-        {/* Header with action buttons */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Usuários</h1>
-            <p className="text-gray-500 mt-1">Gerencie os usuários e suas permissões no sistema</p>
-          </div>
-          <div className="mt-4 sm:mt-0 flex space-x-3">
-            <Button className="bg-primary text-white flex items-center">
-              <UserPlus className="mr-2 h-4 w-4" />
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Usuários</h1>
+        <Dialog open={showNewUserDialog} onOpenChange={setShowNewUserDialog}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
               Novo Usuário
             </Button>
-            <Button variant="outline" className="flex items-center">
-              <Download className="mr-2 h-4 w-4" />
-              Exportar
-            </Button>
-          </div>
-        </div>
-
-        {/* User Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                  <Users className="h-6 w-6 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Total de Usuários</p>
-                  <p className="text-2xl font-bold">{USER_STATS.total}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Usuários Ativos</p>
-                  <p className="text-2xl font-bold">{USER_STATS.active}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center mr-4">
-                  <ShieldAlert className="h-6 w-6 text-amber-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Administradores</p>
-                  <p className="text-2xl font-bold">{USER_STATS.admins}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
-                  <Calendar className="h-6 w-6 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Novos este mês</p>
-                  <p className="text-2xl font-bold">{USER_STATS.newThisMonth}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filters and Search */}
-        <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
-                </div>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Criar Novo Usuário</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 mt-4">
+              <div>
                 <Input
-                  type="text"
-                  placeholder="Buscar usuários..."
-                  className="pl-10 w-full"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Nome completo"
+                  value={newUser.name}
+                  onChange={e => setNewUser(prev => ({ ...prev, name: e.target.value }))}
                 />
               </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="w-full sm:w-[150px]">
-                <select
-                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={roleFilter}
-                  onChange={(e) => setRoleFilter(e.target.value)}
-                >
-                  <option value="all">Todos Perfis</option>
-                  <option value="admin">Administradores</option>
-                  <option value="editor">Editores</option>
-                  <option value="viewer">Visualizadores</option>
-                </select>
+              <div>
+                <Input
+                  placeholder="E-mail"
+                  type="email"
+                  value={newUser.email}
+                  onChange={e => setNewUser(prev => ({ ...prev, email: e.target.value }))}
+                />
               </div>
-
-              <div className="w-full sm:w-[150px]">
-                <select
-                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  <option value="all">Todos Status</option>
-                  <option value="active">Ativos</option>
-                  <option value="inactive">Inativos</option>
-                  <option value="pending">Pendentes</option>
-                </select>
+              <div>
+                <Input
+                  placeholder="Telefone"
+                  value={newUser.phone}
+                  onChange={e => setNewUser(prev => ({ ...prev, phone: e.target.value }))}
+                />
               </div>
-
-              <Button variant="outline" className="flex items-center whitespace-nowrap">
-                <Filter className="mr-2 h-4 w-4" />
-                Mais Filtros
-              </Button>
+              <div>
+                <Select
+                  value={newUser.role}
+                  onValueChange={value => setNewUser(prev => ({ ...prev, role: value as User['role'] }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o papel" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Administrador</SelectItem>
+                    <SelectItem value="manager">Gerente</SelectItem>
+                    <SelectItem value="user">Usuário</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Select
+                  value={newUser.status}
+                  onValueChange={value => setNewUser(prev => ({ ...prev, status: value as User['status'] }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Ativo</SelectItem>
+                    <SelectItem value="inactive">Inativo</SelectItem>
+                    <SelectItem value="pending">Pendente</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowNewUserDialog(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={handleCreateUser} disabled={isLoading}>
+                  {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  Criar Usuário
+                </Button>
+              </div>
             </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <Card className="p-4 mb-6">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Buscar usuários..."
+                className="pl-10"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Select value={roleFilter} onValueChange={value => setRoleFilter(value as User['role'] | 'all')}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Filtrar por papel" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os papéis</SelectItem>
+                <SelectItem value="admin">Administrador</SelectItem>
+                <SelectItem value="manager">Gerente</SelectItem>
+                <SelectItem value="user">Usuário</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={value => setStatusFilter(value as User['status'] | 'all')}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Filtrar por status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os status</SelectItem>
+                <SelectItem value="active">Ativo</SelectItem>
+                <SelectItem value="inactive">Inativo</SelectItem>
+                <SelectItem value="pending">Pendente</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
+      </Card>
 
-        {/* Users Table */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle>Lista de Usuários</CardTitle>
-            <div className="text-sm text-gray-500">
-              Mostrando {filteredUsers.length} de {USERS.length} usuários
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="min-w-full divide-y">
+          <div className="bg-gray-50 p-4">
+            <div className="grid grid-cols-6 gap-4">
+              <div className="col-span-2">Usuário</div>
+              <div className="hidden md:block">Papel</div>
+              <div className="hidden md:block">Status</div>
+              <div className="hidden md:block">Último Acesso</div>
+              <div className="text-right">Ações</div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="px-4 py-3 text-left">
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                          checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
-                          onChange={toggleSelectAll}
-                        />
-                      </div>
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Usuário
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Perfil
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Último Acesso
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Data de Criação
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                            checked={selectedUsers.includes(user.id)}
-                            onChange={() => toggleUserSelection(user.id)}
-                          />
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-medium">
-                            {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          user.role === 'admin'
-                            ? 'bg-amber-100 text-amber-800'
-                            : user.role === 'editor'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {user.role === 'admin' && 'Administrador'}
-                          {user.role === 'editor' && 'Editor'}
-                          {user.role === 'viewer' && 'Visualizador'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          user.status === 'active'
-                            ? 'bg-green-100 text-green-800'
-                            : user.status === 'inactive'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {user.status === 'active' && (
-                            <>
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Ativo
-                            </>
-                          )}
-                          {user.status === 'inactive' && (
-                            <>
-                              <XCircle className="h-3 w-3 mr-1" />
-                              Inativo
-                            </>
-                          )}
-                          {user.status === 'pending' && (
-                            <>
-                              <Calendar className="h-3 w-3 mr-1" />
-                              Pendente
-                            </>
-                          )}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {user.lastActive === 'Nunca'
-                          ? 'Nunca'
-                          : new Date(user.lastActive).toLocaleDateString('pt-BR', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                            })
-                        }
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(user.dateCreated).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                        })}
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-3">
-                          <button className="text-blue-600 hover:text-blue-900" title="Editar">
-                            <Edit className="h-5 w-5" />
-                          </button>
-                          <button className="text-gray-600 hover:text-gray-900" title="Enviar Email">
-                            <Mail className="h-5 w-5" />
-                          </button>
-                          <button className="text-amber-600 hover:text-amber-900" title="Redefinir Senha">
-                            <Lock className="h-5 w-5" />
-                          </button>
-                          <button className="text-red-600 hover:text-red-900" title="Remover">
-                            <Trash2 className="h-5 w-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-
-                  {filteredUsers.length === 0 && (
-                    <tr>
-                      <td colSpan={7} className="px-4 py-4 text-center text-gray-500">
-                        Nenhum usuário encontrado com os filtros selecionados.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between border-t bg-gray-50 px-6 py-3">
-            <div className="flex items-center">
-              {selectedUsers.length > 0 && (
-                <>
-                  <span className="text-sm text-gray-700 mr-4">
-                    {selectedUsers.length} usuário(s) selecionado(s)
-                  </span>
-                  <div className="flex space-x-2">
-                    <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Excluir
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Mail className="h-4 w-4 mr-1" />
-                      Enviar Email
-                    </Button>
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={filteredUsers.length === 0}
-              >
-                Anterior
-              </Button>
-              <span className="text-sm text-gray-700">
-                Página 1 de 1
-              </span>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={filteredUsers.length === 0}
-              >
-                Próxima
-              </Button>
-            </div>
-          </CardFooter>
-        </Card>
-
-        {/* Roles and Permissions */}
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Perfis e Permissões</h2>
-            <Button variant="outline" onClick={() => setShowRoleInfo(!showRoleInfo)}>
-              {showRoleInfo ? 'Ocultar Detalhes' : 'Mostrar Detalhes'}
-            </Button>
           </div>
-
-          {showRoleInfo && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {ROLES.map((role) => (
-                <Card key={role.id}>
-                  <CardHeader>
-                    <CardTitle className={`
-                      ${role.id === 'admin' ? 'text-amber-700' : ''}
-                      ${role.id === 'editor' ? 'text-blue-700' : ''}
-                      ${role.id === 'viewer' ? 'text-gray-700' : ''}
-                    `}>
-                      {role.name}
-                    </CardTitle>
-                    <CardDescription>{role.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">Permissões:</h4>
-                    <ul className="space-y-1">
-                      {role.permissions.map((permission) => (
-                        <li key={permission} className="flex items-center text-sm">
-                          <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="capitalize">
-                            {permission.replace(/_/g, ' ')}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                  <CardFooter className="bg-gray-50 border-t">
-                    <div className="text-sm text-gray-500">
-                      Total: {USER_STATS[role.id === 'admin' ? 'admins' : role.id === 'editor' ? 'editors' : 'viewers']} usuário(s)
+          <div className="divide-y">
+            {filteredUsers.map(user => (
+              <motion.div
+                key={user.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="p-4 hover:bg-gray-50"
+              >
+                <div className="grid grid-cols-6 gap-4 items-center">
+                  <div className="col-span-2">
+                    <div className="flex items-center gap-3">
+                      <Avatar>
+                        <AvatarImage src={user.avatar} />
+                        <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{user.name}</div>
+                        <div className="text-sm text-gray-500 flex items-center gap-2">
+                          <Mail className="h-3 w-3" />
+                          {user.email}
+                        </div>
+                        <div className="text-sm text-gray-500 flex items-center gap-2">
+                          <Phone className="h-3 w-3" />
+                          {user.phone}
+                        </div>
+                      </div>
                     </div>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          )}
+                  </div>
+                  <div className="hidden md:flex items-center">
+                    <Badge variant="secondary" className={getRoleColor(user.role)}>
+                      <span className="flex items-center gap-1">
+                        {getRoleIcon(user.role)}
+                        {user.role === 'admin' ? 'Administrador' :
+                         user.role === 'manager' ? 'Gerente' : 'Usuário'}
+                      </span>
+                    </Badge>
+                  </div>
+                  <div className="hidden md:flex items-center">
+                    <Badge variant="secondary" className={getStatusColor(user.status)}>
+                      {user.status === 'active' ? 'Ativo' :
+                       user.status === 'inactive' ? 'Inativo' : 'Pendente'}
+                    </Badge>
+                  </div>
+                  <div className="hidden md:block text-sm text-gray-500">
+                    {user.lastLogin
+                      ? format(user.lastLogin, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+                      : 'Nunca acessou'}
+                  </div>
+                  <div className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => handleToggleStatus(user.id)}
+                          className="flex items-center gap-2"
+                        >
+                          {user.status === 'active' ? (
+                            <>
+                              <XCircle className="h-4 w-4" />
+                              <span>Desativar</span>
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="h-4 w-4" />
+                              <span>Ativar</span>
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center gap-2">
+                          <Pencil className="h-4 w-4" />
+                          <span>Editar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteUser(user.id)}
+                          className="flex items-center gap-2 text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span>Excluir</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 }

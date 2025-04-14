@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -23,7 +23,10 @@ import {
   Share2,
   ActivitySquare,
   ShieldAlert,
-  ChevronDown
+  ChevronDown,
+  Sun,
+  Moon,
+  Monitor
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,95 +36,211 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal
 } from "@/components/ui/dropdown-menu";
 import { usePermissions } from './permission-guard';
 import { useAppStore } from '@/lib/store';
-import Image from 'next/image'; // Added import for Image
+import { useTheme } from 'next-themes';
+import Image from 'next/image';
+import { toast } from 'sonner';
+import { Badge } from './ui/badge';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { hasPermission } = usePermissions();
-  const { user } = useAppStore(state => state.auth);
+  const { user, logout } = useAppStore(state => state.auth);
+  const { theme, setTheme } = useTheme();
+  const [notifications, setNotifications] = useState<number>(0);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
 
-  // Handle notification button click
-  const handleNotificationsClick = () => {
-    router.push('/dashboard/notifications');
+  useEffect(() => {
+    // Simula busca de notificações não lidas
+    const fetchNotifications = async () => {
+      try {
+        // Simulando chamada API
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setNotifications(Math.floor(Math.random() * 5));
+      } catch (error) {
+        console.error('Erro ao buscar notificações:', error);
+      }
+    };
+
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 300000); // A cada 5 minutos
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      // Simulando chamada de logout na API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      logout();
+      toast.success('Logout realizado com sucesso');
+      router.push('/');
+    } catch (error) {
+      toast.error('Erro ao fazer logout. Tente novamente.');
+    }
   };
 
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  const toggleMobileSidebar = () => setMobileSidebarOpen(!mobileSidebarOpen);
+  const handleSync = async () => {
+    try {
+      toast.loading('Sincronizando dados...');
+      // Simulando sincronização
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setLastSyncTime(new Date());
+      toast.success('Dados sincronizados com sucesso!');
+    } catch (error) {
+      toast.error('Erro ao sincronizar dados');
+    }
+  };
 
-  const handleLogout = () => {
-    router.push('/');
+  const handleSearch = (query: string) => {
+    if (query.length >= 3) {
+      router.push(`/dashboard/search?q=${encodeURIComponent(query)}`);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="sticky top-0 z-40 bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-40 bg-background border-b">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center">
               <button
-                className="mr-2 lg:hidden p-2 rounded-md hover:bg-gray-100"
-                onClick={toggleMobileSidebar}
+                className="mr-2 lg:hidden p-2 rounded-md hover:bg-accent"
+                onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
               >
-                <Menu className="h-5 w-5" />
+                {mobileSidebarOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
               </button>
               <Link href="/dashboard" className="flex items-center">
-                <Image src="/logo/rocket-logo.svg" alt="Bueiro Digital" width={32} height={32} />
-                <span className="ml-2 text-xl font-bold text-gray-900">Bueiro Digital</span>
+                <Image
+                  src="/logo/rocket-logo.svg"
+                  alt="Bueiro Digital"
+                  width={32}
+                  height={32}
+                  className="dark:invert"
+                />
+                <span className="ml-2 text-xl font-bold">Bueiro Digital</span>
               </Link>
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Global search button */}
-              <Link href="/dashboard/search" className="p-2 rounded-md hover:bg-gray-100 transition-colors" title="Pesquisa Global">
-                <Search className="h-5 w-5 text-gray-500" />
-              </Link>
-
-              {/* Notifications button */}
-              <button
-                className="p-2 rounded-md hover:bg-gray-100 transition-colors"
-                onClick={handleNotificationsClick}
+              {/* Botão de Sincronização */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleSync}
+                className="relative"
+                title={lastSyncTime ? `Última sincronização: ${lastSyncTime.toLocaleString()}` : 'Sincronizar dados'}
               >
-                <Bell className="h-5 w-5 text-gray-500" />
-              </button>
+                <RefreshCw className="h-5 w-5" />
+              </Button>
 
-              {/* User Menu Dropdown */}
+              {/* Pesquisa Global */}
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSearchOpen(!searchOpen)}
+                  className="relative"
+                >
+                  <Search className="h-5 w-5" />
+                </Button>
+                {searchOpen && (
+                  <div className="absolute right-0 mt-2 w-96 p-4 bg-popover rounded-lg shadow-lg border">
+                    <Input
+                      placeholder="Pesquisar..."
+                      className="w-full"
+                      onChange={(e) => handleSearch(e.target.value)}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Notificações */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.push('/dashboard/notifications')}
+                className="relative"
+              >
+                <Bell className="h-5 w-5" />
+                {notifications > 0 && (
+                  <Badge
+                    variant="destructive"
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                  >
+                    {notifications}
+                  </Badge>
+                )}
+              </Button>
+
+              {/* Menu do Usuário */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100">
-                    <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                      {user?.avatar ? (
-                        <img
-                          src={user.avatar}
-                          alt={user.name}
-                          className="h-8 w-8 rounded-full object-cover"
-                        />
-                      ) : (
-                        <User size={18} />
-                      )}
-                    </div>
-                    <span className="hidden md:flex items-center">
-                      <span className="text-sm font-medium text-gray-700 mr-1">{user?.name || 'Usuário'}</span>
-                      <ChevronDown size={16} className="text-gray-500" />
-                    </span>
-                  </button>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar>
+                      <AvatarImage src={user?.avatar} alt={user?.name} />
+                      <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user?.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Perfil</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Configurações</span>
-                  </DropdownMenuItem>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Perfil</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Configurações</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>
+                        <Sun className="mr-2 h-4 w-4" />
+                        <span>Tema</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                          <DropdownMenuItem onClick={() => setTheme("light")}>
+                            <Sun className="mr-2 h-4 w-4" />
+                            <span>Claro</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setTheme("dark")}>
+                            <Moon className="mr-2 h-4 w-4" />
+                            <span>Escuro</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setTheme("system")}>
+                            <Monitor className="mr-2 h-4 w-4" />
+                            <span>Sistema</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
                   {hasPermission('acessar_admin') && (
                     <DropdownMenuItem onClick={() => router.push('/dashboard/admin')}>
                       <ShieldAlert className="mr-2 h-4 w-4" />
@@ -129,7 +248,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600">
+                  <DropdownMenuItem
+                    className="text-red-600 focus:text-red-600"
+                    onClick={handleLogout}
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sair</span>
                   </DropdownMenuItem>
@@ -145,7 +267,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className={`lg:hidden fixed inset-0 z-50 ${mobileSidebarOpen ? 'block' : 'hidden'}`}>
           <div
             className="absolute inset-0 bg-black/50"
-            onClick={toggleMobileSidebar}
+            onClick={() => setMobileSidebarOpen(false)}
           />
           <nav className="absolute left-0 top-0 bottom-0 w-64 bg-white shadow-lg">
             <div className="h-full flex flex-col py-4">

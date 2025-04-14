@@ -1,5 +1,9 @@
+"use client";
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Toaster } from 'sonner';
+import { AuthProvider } from '@/contexts/AuthContext';
 import './globals.css';
 import { Providers } from '@/components/providers';
 import ClientBody from './ClientBody';
@@ -19,9 +23,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={inter.className}>
-        <Providers>
-          <ClientBody>{children}</ClientBody>
-        </Providers>
+        <AuthProvider>
+          <Providers>
+            <ClientBody>{children}</ClientBody>
+          </Providers>
+          <Toaster richColors position="top-right" />
+        </AuthProvider>
       </body>
     </html>
   );

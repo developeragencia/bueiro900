@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -25,6 +25,61 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DashboardLayout from '@/components/DashboardLayout';
+import { motion } from 'framer-motion';
+
+interface Campaign {
+  id: string;
+  name: string;
+  status: 'active' | 'paused' | 'ended';
+  platform: string;
+  budget: number;
+  spent: number;
+  clicks: number;
+  conversions: number;
+  revenue: number;
+  startDate: string;
+  endDate?: string;
+}
+
+// Dados mockados para exemplo
+const mockCampaigns: Campaign[] = [
+  {
+    id: '1',
+    name: 'Black Friday 2024',
+    status: 'active',
+    platform: 'Facebook',
+    budget: 5000,
+    spent: 2500,
+    clicks: 15000,
+    conversions: 450,
+    revenue: 25000,
+    startDate: '2024-03-01',
+  },
+  {
+    id: '2',
+    name: 'Lançamento Produto X',
+    status: 'paused',
+    platform: 'Google Ads',
+    budget: 3000,
+    spent: 1200,
+    clicks: 8000,
+    conversions: 200,
+    revenue: 12000,
+    startDate: '2024-02-15',
+  },
+  {
+    id: '3',
+    name: 'Remarketing Geral',
+    status: 'active',
+    platform: 'Instagram',
+    budget: 2000,
+    spent: 1800,
+    clicks: 12000,
+    conversions: 300,
+    revenue: 18000,
+    startDate: '2024-01-01',
+  }
+];
 
 export default function CampaignsPage() {
   const router = useRouter();
@@ -36,16 +91,20 @@ export default function CampaignsPage() {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [campaignsState, setCampaignsState] = useState<Campaign[]>([]);
+
+  useEffect(() => {
+    // Aqui você faria a chamada API real
+    setCampaignsState(mockCampaigns);
+  }, []);
 
   // Filter and sort campaigns
-  const filteredCampaigns = campaigns
+  const filteredCampaigns = campaignsState
     .filter(campaign => {
       // Filter by search term
       const matchesSearch =
         campaign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        campaign.url.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        campaign.utmSource.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        campaign.utmMedium.toLowerCase().includes(searchTerm.toLowerCase());
+        campaign.platform.toLowerCase().includes(searchTerm.toLowerCase());
 
       // Filter by status
       const matchesStatus = selectedStatus === 'all' || campaign.status === selectedStatus;
@@ -62,8 +121,8 @@ export default function CampaignsPage() {
 
       if (sortField === 'lastUpdated') {
         return sortDirection === 'asc'
-          ? new Date(a.dateUpdated).getTime() - new Date(b.dateUpdated).getTime()
-          : new Date(b.dateUpdated).getTime() - new Date(a.dateUpdated).getTime();
+          ? new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+          : new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
       }
 
       // Numerical fields
@@ -95,7 +154,7 @@ export default function CampaignsPage() {
         return 'bg-green-100 text-green-800';
       case 'paused':
         return 'bg-amber-100 text-amber-800';
-      case 'draft':
+      case 'ended':
         return 'bg-gray-100 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -113,9 +172,9 @@ export default function CampaignsPage() {
   };
 
   // Calculate campaign statistics
-  const totalVisits = campaigns.reduce((sum, campaign) => sum + (campaign.visits || 0), 0);
-  const totalConversions = campaigns.reduce((sum, campaign) => sum + campaign.conversions, 0);
-  const totalRevenue = campaigns.reduce((sum, campaign) => sum + campaign.revenue, 0);
+  const totalVisits = campaignsState.reduce((sum, campaign) => sum + (campaign.clicks || 0), 0);
+  const totalConversions = campaignsState.reduce((sum, campaign) => sum + campaign.conversions, 0);
+  const totalRevenue = campaignsState.reduce((sum, campaign) => sum + campaign.revenue, 0);
   const averageConversionRate = totalVisits > 0
     ? (totalConversions / totalVisits) * 100
     : 0;
@@ -175,7 +234,7 @@ export default function CampaignsPage() {
                   <option value="all">Todos Status</option>
                   <option value="active">Ativas</option>
                   <option value="paused">Pausadas</option>
-                  <option value="draft">Rascunho</option>
+                  <option value="ended">Finalizadas</option>
                 </select>
               </div>
 
@@ -256,10 +315,10 @@ export default function CampaignsPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('visits')}>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('clicks')}>
                     <div className="flex items-center">
                       Visitas
-                      {sortField === 'visits' && (
+                      {sortField === 'clicks' && (
                         <ChevronDown className={`ml-1 h-4 w-4 ${sortDirection === 'desc' ? 'transform rotate-180' : ''}`} />
                       )}
                     </div>
@@ -303,29 +362,25 @@ export default function CampaignsPage() {
                         </Link>
                       </div>
                       <div className="text-xs text-gray-500 flex space-x-2">
-                        <span>UTM: {campaign.utmCampaign}</span>
-                        <span>•</span>
-                        <span>Fonte: {campaign.utmSource}</span>
-                        <span>•</span>
-                        <span>Meio: {campaign.utmMedium}</span>
+                        <span>Plataforma: {campaign.platform}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass(campaign.status)}`}>
                         {campaign.status === 'active' && 'Ativa'}
                         {campaign.status === 'paused' && 'Pausada'}
-                        {campaign.status === 'draft' && 'Rascunho'}
+                        {campaign.status === 'ended' && 'Finalizada'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {(campaign.visits || 0).toLocaleString('pt-BR')}
+                      {(campaign.clicks || 0).toLocaleString('pt-BR')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {campaign.conversions.toLocaleString('pt-BR')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {campaign.visits && campaign.visits > 0
-                        ? ((campaign.conversions / campaign.visits) * 100).toFixed(2)
+                      {campaign.clicks && campaign.clicks > 0
+                        ? ((campaign.conversions / campaign.clicks) * 100).toFixed(2)
                         : '0.00'}%
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
@@ -338,7 +393,7 @@ export default function CampaignsPage() {
                           variant="ghost"
                           className="h-8 w-8 p-0"
                           title="Copiar URL"
-                          onClick={() => handleCopyUrl(campaign.url, campaign.id)}
+                          onClick={() => handleCopyUrl(campaign.platform, campaign.id)}
                         >
                           {copied === campaign.id ? (
                             <CheckCircle className="h-4 w-4 text-green-500" />
@@ -353,7 +408,7 @@ export default function CampaignsPage() {
                           title="Abrir URL"
                           asChild
                         >
-                          <a href={campaign.url} target="_blank" rel="noopener noreferrer">
+                          <a href={campaign.platform} target="_blank" rel="noopener noreferrer">
                             <ExternalLink className="h-4 w-4" />
                           </a>
                         </Button>

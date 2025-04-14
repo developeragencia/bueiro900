@@ -16,76 +16,216 @@ import {
   ShieldAlert,
   KeyRound,
   Languages,
-  Smartphone
+  Smartphone,
+  Palette,
+  Webhook,
+  AlertCircle,
+  Check,
+  X
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import DashboardLayout from '@/components/DashboardLayout';
+import { motion } from 'framer-motion';
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 // Settings tabs
-type SettingsTab = 'profile' | 'account' | 'notifications' | 'integrations' | 'billing' | 'advanced';
+type SettingsTab = 'profile' | 'account' | 'notifications' | 'integrations' | 'billing' | 'advanced' | 'security';
+
+interface NotificationSettings {
+  email: boolean;
+  push: boolean;
+  sms: boolean;
+  whatsapp: boolean;
+  salesAlert: boolean;
+  customerAlert: boolean;
+  integrationAlert: boolean;
+  systemAlert: boolean;
+}
+
+interface IntegrationSettings {
+  id: string;
+  name: string;
+  status: 'connected' | 'disconnected';
+  lastSync?: string;
+  icon: string;
+}
+
+interface UserProfile {
+  name: string;
+  email: string;
+  role: string;
+  company: string;
+  phone?: string;
+  timezone: string;
+  language: string;
+  avatar?: string;
+}
+
+interface Settings {
+  notifications: {
+    email: boolean;
+    push: boolean;
+    sms: boolean;
+    marketing: boolean;
+  };
+  appearance: {
+    theme: 'light' | 'dark' | 'system';
+    language: string;
+    timezone: string;
+  };
+  security: {
+    twoFactor: boolean;
+    sessionTimeout: number;
+    loginNotifications: boolean;
+  };
+  integrations: {
+    google: boolean;
+    slack: boolean;
+    github: boolean;
+    stripe: boolean;
+  };
+}
+
+const mockNotifications: NotificationSettings = {
+  email: true,
+  push: true,
+  sms: false,
+  whatsapp: true,
+  salesAlert: true,
+  customerAlert: true,
+  integrationAlert: false,
+  systemAlert: true
+};
+
+const mockIntegrations: IntegrationSettings[] = [
+  {
+    id: '1',
+    name: 'Facebook Business',
+    status: 'connected',
+    lastSync: '2024-03-18T14:30:00',
+    icon: '📱'
+  },
+  {
+    id: '2',
+    name: 'Google Analytics',
+    status: 'connected',
+    lastSync: '2024-03-18T14:00:00',
+    icon: '📊'
+  },
+  {
+    id: '3',
+    name: 'Shopify',
+    status: 'disconnected',
+    icon: '🛍️'
+  }
+];
+
+const mockProfile: UserProfile = {
+  name: 'João Silva',
+  email: 'joao.silva@empresa.com',
+  role: 'Administrador',
+  company: 'Empresa LTDA',
+  phone: '+55 11 99999-9999',
+  timezone: 'America/Sao_Paulo',
+  language: 'pt-BR',
+  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John'
+};
+
+const mockSettings: Settings = {
+  notifications: {
+    email: true,
+    push: true,
+    sms: false,
+    marketing: false
+  },
+  appearance: {
+    theme: 'system',
+    language: 'pt-BR',
+    timezone: 'America/Sao_Paulo'
+  },
+  security: {
+    twoFactor: false,
+    sessionTimeout: 30,
+    loginNotifications: true
+  },
+  integrations: {
+    google: true,
+    slack: false,
+    github: true,
+    stripe: true
+  }
+};
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
-
-  // Profile form state
-  const [profile, setProfile] = useState({
-    name: 'João Silva',
-    email: 'joao.silva@email.com',
-    phone: '(11) 98765-4321',
-    company: 'Bueiro Digital',
-    position: 'Administrador',
-    bio: 'Administrador de campanhas e especialista em UTM.',
-    language: 'pt-BR'
-  });
-
-  // Update profile field
-  const updateProfile = (field: string, value: string) => {
-    setProfile({ ...profile, [field]: value });
-  };
-
-  // Saved state for handling actions
+  const [notifications, setNotifications] = useState<NotificationSettings>(mockNotifications);
+  const [integrations] = useState<IntegrationSettings[]>(mockIntegrations);
+  const [profile, setProfile] = useState<UserProfile>(mockProfile);
+  const [isEditing, setIsEditing] = useState(false);
+  const [settings, setSettings] = useState<Settings>(mockSettings);
   const [isSaving, setIsSaving] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  // Handler for saving profile changes
-  const handleSaveProfile = () => {
+  const handleNotificationChange = (key: keyof NotificationSettings) => {
+    setNotifications(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const handleProfileChange = (key: keyof UserProfile, value: string) => {
+    setProfile(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const handleAppearanceChange = (key: keyof Settings['appearance'], value: string) => {
+    setSettings(prev => ({
+      ...prev,
+      appearance: {
+        ...prev.appearance,
+        [key]: value
+      }
+    }));
+  };
+
+  const handleSecurityChange = (key: keyof Settings['security'], value: any) => {
+    setSettings(prev => ({
+      ...prev,
+      security: {
+        ...prev.security,
+        [key]: value
+      }
+    }));
+  };
+
+  const handleIntegrationToggle = (key: keyof Settings['integrations']) => {
+    setSettings(prev => ({
+      ...prev,
+      integrations: {
+        ...prev.integrations,
+        [key]: !prev.integrations[key]
+      }
+    }));
+  };
+
+  const handleSave = async () => {
     setIsSaving(true);
-
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Simula uma chamada de API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      toast.success('Configurações salvas com sucesso');
+    } catch (error) {
+      toast.error('Erro ao salvar configurações');
+    } finally {
       setIsSaving(false);
-      toast.success('Alterações salvas com sucesso!');
-    }, 1000);
-  };
-
-  // Handler for changing password
-  const handlePasswordChange = () => {
-    setIsChangingPassword(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsChangingPassword(false);
-      toast.success('Senha alterada com sucesso!');
-    }, 1000);
-  };
-
-  // Handler for connecting integrations
-  const handleConnectIntegration = (name: string) => {
-    toast.success(`Conectando à plataforma ${name}...`);
-  };
-
-  // Handler for configuring integrations
-  const handleConfigureIntegration = (name: string) => {
-    toast.success(`Configurando plataforma ${name}...`);
-  };
-
-  // Handler for dangerous actions
-  const handleDangerAction = (action: string) => {
-    // Show confirmation
-    if (confirm(`Tem certeza que deseja ${action}? Esta ação não pode ser desfeita.`)) {
-      toast.error(`${action} iniciado. Esta ação pode levar algum tempo.`);
     }
   };
 
@@ -95,7 +235,7 @@ export default function SettingsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Configurações</h1>
-            <p className="text-gray-500 mt-1">Gerencie suas preferências e configurações da conta</p>
+            <p className="text-gray-500 mt-1">Gerencie suas preferências e configurações do sistema</p>
           </div>
         </div>
 
@@ -140,6 +280,12 @@ export default function SettingsPage() {
                   isActive={activeTab === 'advanced'}
                   onClick={() => setActiveTab('advanced')}
                 />
+                <SettingsNavItem
+                  label="Segurança"
+                  icon={<Lock className="h-5 w-5" />}
+                  isActive={activeTab === 'security'}
+                  onClick={() => setActiveTab('security')}
+                />
               </nav>
             </div>
           </div>
@@ -148,134 +294,95 @@ export default function SettingsPage() {
           <div className="flex-1">
             {/* Profile Settings */}
             {activeTab === 'profile' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Informações do Perfil</CardTitle>
-                  <CardDescription>Atualize suas informações pessoais</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex flex-col md:flex-row gap-6">
-                    <div className="flex-1">
-                      <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="profile-name">
-                          Nome Completo
-                        </label>
-                        <Input
-                          id="profile-name"
-                          value={profile.name}
-                          onChange={(e) => updateProfile('name', e.target.value)}
-                        />
-                      </div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-white rounded-lg shadow-sm p-6"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-lg font-semibold">Perfil do Usuário</h2>
+                  <button
+                    onClick={() => setIsEditing(!isEditing)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                  >
+                    {isEditing ? 'Salvar' : 'Editar'}
+                  </button>
+                </div>
 
-                      <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="profile-email">
-                          Email
-                        </label>
-                        <Input
-                          id="profile-email"
-                          type="email"
-                          value={profile.email}
-                          onChange={(e) => updateProfile('email', e.target.value)}
-                        />
-                      </div>
-
-                      <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="profile-phone">
-                          Telefone
-                        </label>
-                        <Input
-                          id="profile-phone"
-                          value={profile.phone}
-                          onChange={(e) => updateProfile('phone', e.target.value)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="profile-company">
-                          Empresa
-                        </label>
-                        <Input
-                          id="profile-company"
-                          value={profile.company}
-                          onChange={(e) => updateProfile('company', e.target.value)}
-                        />
-                      </div>
-
-                      <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="profile-position">
-                          Cargo
-                        </label>
-                        <Input
-                          id="profile-position"
-                          value={profile.position}
-                          onChange={(e) => updateProfile('position', e.target.value)}
-                        />
-                      </div>
-
-                      <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="profile-language">
-                          Idioma
-                        </label>
-                        <select
-                          id="profile-language"
-                          className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                          value={profile.language}
-                          onChange={(e) => updateProfile('language', e.target.value)}
-                        >
-                          <option value="pt-BR">Português (Brasil)</option>
-                          <option value="en-US">English (US)</option>
-                          <option value="es">Español</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="profile-bio">
-                      Biografia
-                    </label>
-                    <textarea
-                      id="profile-bio"
-                      rows={4}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                      value={profile.bio}
-                      onChange={(e) => updateProfile('bio', e.target.value)}
+                    <label className="block text-sm font-medium text-gray-700">Nome</label>
+                    <input
+                      type="text"
+                      value={profile.name}
+                      onChange={(e) => handleProfileChange('name', e.target.value)}
+                      disabled={!isEditing}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Foto de Perfil
-                    </label>
-                    <div className="flex items-center gap-4">
-                      <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                        <div className="text-gray-500 font-semibold text-xl">
-                          {profile.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                        </div>
-                      </div>
-                      <div>
-                        <Button variant="outline" size="sm" className="mb-1">
-                          <Image className="h-4 w-4 mr-2" />
-                          Alterar Foto
-                        </Button>
-                        <p className="text-xs text-gray-500">JPG, GIF ou PNG. Máximo 1MB</p>
-                      </div>
-                    </div>
+                    <label className="block text-sm font-medium text-gray-700">Email</label>
+                    <input
+                      type="email"
+                      value={profile.email}
+                      onChange={(e) => handleProfileChange('email', e.target.value)}
+                      disabled={!isEditing}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
                   </div>
-                </CardContent>
-                <CardFooter className="flex justify-end border-t bg-gray-50 py-4">
-                  <Button
-                    className="bg-primary text-white"
-                    onClick={handleSaveProfile}
-                    disabled={isSaving}
-                  >
-                    <Save className="h-4 w-4 mr-2" />
-                    {isSaving ? 'Salvando...' : 'Salvar Alterações'}
-                  </Button>
-                </CardFooter>
-              </Card>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Empresa</label>
+                    <input
+                      type="text"
+                      value={profile.company}
+                      onChange={(e) => handleProfileChange('company', e.target.value)}
+                      disabled={!isEditing}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Telefone</label>
+                    <input
+                      type="tel"
+                      value={profile.phone || ''}
+                      onChange={(e) => handleProfileChange('phone', e.target.value)}
+                      disabled={!isEditing}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Fuso Horário</label>
+                    <select
+                      value={profile.timezone}
+                      onChange={(e) => handleProfileChange('timezone', e.target.value)}
+                      disabled={!isEditing}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    >
+                      <option value="America/Sao_Paulo">América/São Paulo</option>
+                      <option value="America/New_York">América/Nova York</option>
+                      <option value="Europe/London">Europa/Londres</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Idioma</label>
+                    <select
+                      value={profile.language}
+                      onChange={(e) => handleProfileChange('language', e.target.value)}
+                      disabled={!isEditing}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    >
+                      <option value="pt-BR">Português (Brasil)</option>
+                      <option value="en-US">English (US)</option>
+                      <option value="es">Español</option>
+                    </select>
+                  </div>
+                </div>
+              </motion.div>
             )}
 
             {/* Account Settings */}
@@ -305,11 +412,11 @@ export default function SettingsPage() {
                         <Button
                           className="mt-2"
                           variant="outline"
-                          onClick={handlePasswordChange}
-                          disabled={isChangingPassword}
+                          onClick={handleSave}
+                          disabled={isSaving}
                         >
                           <KeyRound className="h-4 w-4 mr-2" />
-                          {isChangingPassword ? 'Alterando...' : 'Alterar Senha'}
+                          {isSaving ? 'Alterando...' : 'Alterar Senha'}
                         </Button>
                       </div>
 
@@ -378,7 +485,7 @@ export default function SettingsPage() {
                 <CardFooter className="flex justify-end border-t bg-gray-50 py-4">
                   <Button
                     className="bg-primary text-white"
-                    onClick={handleSaveProfile}
+                    onClick={handleSave}
                     disabled={isSaving}
                   >
                     <Save className="h-4 w-4 mr-2" />
@@ -390,226 +497,100 @@ export default function SettingsPage() {
 
             {/* Notifications Settings */}
             {activeTab === 'notifications' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Preferências de Notificação</CardTitle>
-                  <CardDescription>Controle como e quando você recebe notificações</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-medium mb-4 flex items-center">
-                        <Mail className="h-5 w-5 mr-2 text-gray-500" />
-                        Notificações por Email
-                      </h3>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-white rounded-lg shadow-sm p-6"
+              >
+                <h2 className="text-lg font-semibold mb-6">Preferências de Notificação</h2>
 
-                      <div className="space-y-4">
-                        <NotificationOption
-                          title="Relatórios Semanais"
-                          description="Receba um resumo semanal das suas campanhas"
-                          defaultChecked
-                        />
-                        <NotificationOption
-                          title="Alertas de Campanhas"
-                          description="Notificações sobre mudanças nas suas campanhas"
-                          defaultChecked
-                        />
-                        <NotificationOption
-                          title="Novas Vendas"
-                          description="Seja notificado quando uma nova venda for registrada"
-                          defaultChecked
-                        />
-                        <NotificationOption
-                          title="Atualizações do Sistema"
-                          description="Informações sobre atualizações e novos recursos"
-                          defaultChecked
-                        />
-                        <NotificationOption
-                          title="Dicas e Recomendações"
-                          description="Receba dicas para melhorar suas campanhas"
-                          defaultChecked={false}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="border-t pt-6">
-                      <h3 className="text-lg font-medium mb-4 flex items-center">
-                        <Smartphone className="h-5 w-5 mr-2 text-gray-500" />
-                        Notificações no Navegador
-                      </h3>
-
-                      <div className="space-y-4">
-                        <NotificationOption
-                          title="Alertas de Campanhas"
-                          description="Notificações sobre mudanças nas suas campanhas"
-                          defaultChecked={false}
-                        />
-                        <NotificationOption
-                          title="Novas Vendas"
-                          description="Seja notificado quando uma nova venda for registrada"
-                          defaultChecked={false}
-                        />
-                        <NotificationOption
-                          title="Metas Atingidas"
-                          description="Notificações quando metas forem atingidas"
-                          defaultChecked={false}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="border-t pt-6">
-                      <h3 className="text-lg font-medium mb-4">Frequência de Email</h3>
-
-                      <div className="space-y-2">
-                        <div className="flex items-center">
-                          <input
-                            type="radio"
-                            id="freq-realtime"
-                            name="email-frequency"
-                            className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
-                          />
-                          <label htmlFor="freq-realtime" className="ml-2 text-sm text-gray-700">
-                            Tempo real
-                          </label>
-                        </div>
-                        <div className="flex items-center">
-                          <input
-                            type="radio"
-                            id="freq-daily"
-                            name="email-frequency"
-                            className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
-                            defaultChecked
-                          />
-                          <label htmlFor="freq-daily" className="ml-2 text-sm text-gray-700">
-                            Resumo diário
-                          </label>
-                        </div>
-                        <div className="flex items-center">
-                          <input
-                            type="radio"
-                            id="freq-weekly"
-                            name="email-frequency"
-                            className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
-                          />
-                          <label htmlFor="freq-weekly" className="ml-2 text-sm text-gray-700">
-                            Resumo semanal
-                          </label>
-                        </div>
-                      </div>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900 mb-4">Canais de Notificação</h3>
+                    <div className="space-y-4">
+                      {Object.entries(notifications)
+                        .filter(([key]) => ['email', 'push', 'sms', 'whatsapp'].includes(key))
+                        .map(([key, value]) => (
+                          <div key={key} className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={value}
+                              onChange={() => handleNotificationChange(key as keyof NotificationSettings)}
+                              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            />
+                            <label className="ml-3 text-sm text-gray-700">
+                              {key.charAt(0).toUpperCase() + key.slice(1)}
+                            </label>
+                          </div>
+                        ))}
                     </div>
                   </div>
-                </CardContent>
-                <CardFooter className="flex justify-end border-t bg-gray-50 py-4">
-                  <Button className="bg-primary text-white">
-                    <Save className="h-4 w-4 mr-2" />
-                    Salvar Preferências
-                  </Button>
-                </CardFooter>
-              </Card>
+
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900 mb-4">Tipos de Alerta</h3>
+                    <div className="space-y-4">
+                      {Object.entries(notifications)
+                        .filter(([key]) => key.endsWith('Alert'))
+                        .map(([key, value]) => (
+                          <div key={key} className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={value}
+                              onChange={() => handleNotificationChange(key as keyof NotificationSettings)}
+                              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            />
+                            <label className="ml-3 text-sm text-gray-700">
+                              {key.replace('Alert', '').split(/(?=[A-Z])/).join(' ')}
+                            </label>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             )}
 
             {/* Integrations Settings */}
             {activeTab === 'integrations' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Integrações</CardTitle>
-                  <CardDescription>Configure e gerencie integrações com outras plataformas</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                      <div className="flex items-center">
-                        <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center mr-4">
-                          <img src="https://ext.same-assets.com/501614606/3848818458.png" alt="Eduzz" className="h-8 w-8 object-contain" />
-                        </div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-white rounded-lg shadow-sm p-6"
+              >
+                <h2 className="text-lg font-semibold mb-6">Integrações</h2>
+
+                <div className="space-y-4">
+                  {integrations.map((integration) => (
+                    <div
+                      key={integration.id}
+                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <span className="text-2xl">{integration.icon}</span>
                         <div>
-                          <h4 className="font-medium">Eduzz</h4>
-                          <p className="text-sm text-gray-500">Integrado em 10/03/2023</p>
+                          <h3 className="text-sm font-medium text-gray-900">{integration.name}</h3>
+                          {integration.lastSync && (
+                            <p className="text-xs text-gray-500">
+                              Última sincronização: {new Date(integration.lastSync).toLocaleString()}
+                            </p>
+                          )}
                         </div>
                       </div>
-                      <Button
-                        variant="outline"
-                        onClick={() => handleConfigureIntegration('Eduzz')}
+                      <button
+                        className={`
+                          px-4 py-2 text-sm font-medium rounded-lg
+                          ${integration.status === 'connected'
+                            ? 'text-red-600 hover:text-red-700'
+                            : 'text-blue-600 hover:text-blue-700'
+                          }
+                        `}
                       >
-                        Configurar
-                      </Button>
+                        {integration.status === 'connected' ? 'Desconectar' : 'Conectar'}
+                      </button>
                     </div>
-
-                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                      <div className="flex items-center">
-                        <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center mr-4">
-                          <img src="https://ext.same-assets.com/501614606/1799828963.png" alt="Kiwify" className="h-8 w-8 object-contain" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">Kiwify</h4>
-                          <p className="text-sm text-gray-500">Integrado em 15/04/2023</p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        onClick={() => handleConfigureIntegration('Kiwify')}
-                      >
-                        Configurar
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                      <div className="flex items-center">
-                        <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center mr-4">
-                          <img src="https://ext.same-assets.com/501614606/4125013978.png" alt="Greenn" className="h-8 w-8 object-contain" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">Greenn</h4>
-                          <p className="text-sm text-gray-500">Integrado em 22/06/2023</p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        onClick={() => handleConfigureIntegration('Greenn')}
-                      >
-                        Configurar
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 bg-gray-50">
-                      <div className="flex items-center">
-                        <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center mr-4">
-                          <img src="https://ext.same-assets.com/501614606/2658908938.png" alt="Digistore" className="h-8 w-8 object-contain" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">Digistore</h4>
-                          <p className="text-sm text-gray-500">Não integrado</p>
-                        </div>
-                      </div>
-                      <Button onClick={() => handleConnectIntegration('Digistore')}>
-                        Conectar
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 bg-gray-50">
-                      <div className="flex items-center">
-                        <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center mr-4">
-                          <img src="https://ext.same-assets.com/501614606/773763580.png" alt="Lastlink" className="h-8 w-8 object-contain" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">Lastlink</h4>
-                          <p className="text-sm text-gray-500">Não integrado</p>
-                        </div>
-                      </div>
-                      <Button onClick={() => handleConnectIntegration('Lastlink')}>
-                        Conectar
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 pt-6 border-t">
-                    <Button variant="outline" className="w-full">
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Ver Todas as Integrações Disponíveis
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                  ))}
+                </div>
+              </motion.div>
             )}
 
             {/* Other tabs content would go here */}
@@ -660,7 +641,7 @@ export default function SettingsPage() {
                         <Button
                           variant="outline"
                           className="border-red-200 text-red-600 hover:bg-red-50"
-                          onClick={() => handleDangerAction('limpar todos os dados')}
+                          onClick={() => handleSave}
                         >
                           Limpar Todos os Dados
                         </Button>
@@ -668,7 +649,7 @@ export default function SettingsPage() {
                           <Button
                             variant="outline"
                             className="border-red-200 text-red-600 hover:bg-red-50"
-                            onClick={() => handleDangerAction('excluir a conta')}
+                            onClick={() => handleSave}
                           >
                             Excluir Conta
                           </Button>
@@ -678,6 +659,69 @@ export default function SettingsPage() {
                   </div>
                 </CardContent>
               </Card>
+            )}
+
+            {/* Security Settings */}
+            {activeTab === 'security' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-white rounded-lg shadow-sm p-6"
+              >
+                <h2 className="text-lg font-semibold mb-6">Segurança</h2>
+
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900 mb-2">Alterar Senha</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm text-gray-700">Senha Atual</label>
+                        <input
+                          type="password"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-700">Nova Senha</label>
+                        <input
+                          type="password"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-700">Confirmar Nova Senha</label>
+                        <input
+                          type="password"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        />
+                      </div>
+                      <button className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                        Atualizar Senha
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900 mb-2">Autenticação de Dois Fatores</h3>
+                    <p className="text-sm text-gray-500 mb-4">
+                      Adicione uma camada extra de segurança à sua conta ativando a autenticação de dois fatores.
+                    </p>
+                    <button className="w-full px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
+                      Ativar 2FA
+                    </button>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900 mb-2">Sessões Ativas</h3>
+                    <p className="text-sm text-gray-500 mb-4">
+                      Revise e gerencie suas sessões ativas em diferentes dispositivos.
+                    </p>
+                    <button className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">
+                      Encerrar Todas as Sessões
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
             )}
           </div>
         </div>
@@ -706,38 +750,5 @@ function SettingsNavItem({ label, icon, isActive, onClick }: SettingsNavItemProp
       <span className="flex-shrink-0 mr-3">{icon}</span>
       <span>{label}</span>
     </button>
-  );
-}
-
-interface NotificationOptionProps {
-  title: string;
-  description: string;
-  defaultChecked: boolean;
-}
-
-function NotificationOption({ title, description, defaultChecked }: NotificationOptionProps) {
-  return (
-    <div className="flex items-center justify-between">
-      <div>
-        <h4 className="text-sm font-medium text-gray-700">{title}</h4>
-        <p className="text-xs text-gray-500">{description}</p>
-      </div>
-      <div className="relative inline-block w-10 mr-2 align-middle select-none">
-        <input
-          type="checkbox"
-          className="sr-only"
-          id={`toggle-${title.replace(/\s+/g, '-').toLowerCase()}`}
-          defaultChecked={defaultChecked}
-        />
-        <label
-          htmlFor={`toggle-${title.replace(/\s+/g, '-').toLowerCase()}`}
-          className={`block h-6 w-11 rounded-full ${defaultChecked ? 'bg-primary' : 'bg-gray-300'} cursor-pointer transition-colors`}
-        >
-          <span
-            className={`block h-4 w-4 mt-1 ml-1 rounded-full bg-white shadow transform transition-transform ${defaultChecked ? 'translate-x-5' : ''}`}
-          />
-        </label>
-      </div>
-    </div>
   );
 }

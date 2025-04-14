@@ -8,12 +8,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Loader2, RocketIcon, ArrowLeft, Facebook, Mail } from 'lucide-react';
+import { Eye, EyeOff, Loader2, RocketIcon, ArrowLeft, Facebook, Mail, Lock, AlertCircle, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAppStore } from '@/lib/store';
 import { Separator } from '@/components/ui/separator';
+import { motion } from 'framer-motion';
 
 // Schema de validação
 const loginSchema = z.object({
@@ -23,6 +24,11 @@ const loginSchema = z.object({
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
+
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +41,11 @@ export default function Login() {
   const login = useAppStore(state => state.login);
   const loginWithGoogle = useAppStore(state => state.loginWithGoogle);
   const loginWithFacebook = useAppStore(state => state.loginWithFacebook);
+  const [credentials, setCredentials] = useState<LoginCredentials>({
+    email: '',
+    password: ''
+  });
+  const [errors, setErrors] = useState<Partial<LoginCredentials>>({});
 
   // Gerar estrelas para o fundo
   useEffect(() => {
@@ -111,6 +122,82 @@ export default function Login() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Partial<LoginCredentials> = {};
+
+    if (!credentials.email) {
+      newErrors.email = 'Email é obrigatório';
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(credentials.email)) {
+      newErrors.email = 'Email inválido';
+    }
+
+    if (!credentials.password) {
+      newErrors.password = 'Senha é obrigatória';
+    } else if (credentials.password.length < 6) {
+      newErrors.password = 'Senha deve ter no mínimo 6 caracteres';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    try {
+      // Simula chamada à API de autenticação
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Aqui você implementaria a chamada real à sua API de autenticação
+      // const response = await fetch('/api/auth/login', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(credentials)
+      // });
+      
+      // if (!response.ok) throw new Error('Credenciais inválidas');
+      
+      // const data = await response.json();
+      // localStorage.setItem('token', data.token);
+
+      toast.success('Login realizado com sucesso!');
+      router.push('/dashboard');
+    } catch (error) {
+      toast.error('Erro ao fazer login. Verifique suas credenciais.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider: 'google' | 'facebook' | 'github') => {
+    setIsLoading(true);
+
+    try {
+      // Aqui você implementaria a autenticação social usando a SDK apropriada
+      // Por exemplo, para Google:
+      // await signInWithGoogle();
+      
+      // Para Facebook:
+      // await signInWithFacebook();
+      
+      // Para Github:
+      // await signInWithGithub();
+
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      toast.success(`Login com ${provider} realizado com sucesso!`);
+      router.push('/dashboard');
+    } catch (error) {
+      toast.error(`Erro ao fazer login com ${provider}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-r from-blue-900 to-indigo-800 text-white relative overflow-hidden">
       {/* Back to home button */}
@@ -174,22 +261,17 @@ export default function Login() {
                 type="button"
                 variant="outline"
                 className="w-full h-11 flex items-center justify-center gap-2"
-                onClick={handleGoogleLogin}
-                disabled={isGoogleLoading}
+                onClick={() => handleSocialLogin('google')}
+                disabled={isLoading}
               >
-                {isGoogleLoading ? (
+                {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Entrando com Google...
                   </>
                 ) : (
                   <>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24">
-                      <path fill="#EA4335" d="M5.26620003,9.76452941 C6.19878754,6.93863203 8.85444915,4.90909091 12,4.90909091 C13.6909091,4.90909091 15.2181818,5.50909091 16.4181818,6.49090909 L19.9090909,3 C17.7818182,1.14545455 15.0545455,0 12,0 C7.27006974,0 3.1977497,2.69829785 1.23999023,6.65002441 L5.26620003,9.76452941 Z"/>
-                      <path fill="#34A853" d="M16.0407269,18.0125889 C14.9509167,18.7163016 13.5660892,19.0909091 12,19.0909091 C8.86648613,19.0909091 6.21911939,17.076871 5.27698177,14.2678769 L1.23746264,17.3349879 C3.19279051,21.2970142 7.26500293,24 12,24 C14.9328362,24 17.7353462,22.9573905 19.834192,20.9995801 L16.0407269,18.0125889 Z"/>
-                      <path fill="#4A90E2" d="M19.834192,20.9995801 C22.0291676,18.9520994 23.4545455,15.903663 23.4545455,12 C23.4545455,11.2909091 23.3454545,10.5272727 23.1818182,9.81818182 L12,9.81818182 L12,14.4545455 L18.4363636,14.4545455 C18.1187732,16.013626 17.2662994,17.2212117 16.0407269,18.0125889 L19.834192,20.9995801 Z"/>
-                      <path fill="#FBBC05" d="M5.27698177,14.2678769 C5.03832634,13.556323 4.90909091,12.7937589 4.90909091,12 C4.90909091,11.2182781 5.03443647,10.4668121 5.26620003,9.76452941 L1.23999023,6.65002441 C0.43658717,8.26043162 0,10.0753848 0,12 C0,13.9195484 0.444780743,15.7301709 1.23746264,17.3349879 L5.27698177,14.2678769 Z"/>
-                    </svg>
+                    <Github className="h-5 w-5" />
                     Entrar com Google
                   </>
                 )}
@@ -199,10 +281,10 @@ export default function Login() {
                 type="button"
                 variant="outline"
                 className="w-full h-11 flex items-center justify-center gap-2 bg-[#1877F2] text-white hover:bg-[#166fe5] border-[#1877F2]"
-                onClick={handleFacebookLogin}
-                disabled={isFacebookLoading}
+                onClick={() => handleSocialLogin('facebook')}
+                disabled={isLoading}
               >
-                {isFacebookLoading ? (
+                {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Entrando com Facebook...
@@ -211,6 +293,26 @@ export default function Login() {
                   <>
                     <Facebook className="h-5 w-5" />
                     Entrar com Facebook
+                  </>
+                )}
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-11 flex items-center justify-center gap-2 bg-[#1877F2] text-white hover:bg-[#166fe5] border-[#1877F2]"
+                onClick={() => handleSocialLogin('github')}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Entrando com Github...
+                  </>
+                ) : (
+                  <>
+                    <Github className="h-5 w-5" />
+                    Entrar com Github
                   </>
                 )}
               </Button>
@@ -225,7 +327,7 @@ export default function Login() {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-4">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
