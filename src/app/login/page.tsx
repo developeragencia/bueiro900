@@ -15,6 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useAppStore } from '@/lib/store';
 import { Separator } from '@/components/ui/separator';
 import { motion } from 'framer-motion';
+import { useAuth } from "@/contexts/AuthContext";
 
 // Schema de validação
 const loginSchema = z.object({
@@ -45,7 +46,7 @@ export default function Login() {
     email: '',
     password: ''
   });
-  const [errors, setErrors] = useState<Partial<LoginCredentials>>({});
+  const { signIn, user } = useAuth();
 
   // Gerar estrelas para o fundo
   useEffect(() => {
@@ -63,11 +64,17 @@ export default function Login() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+
   // Configurar react-hook-form
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors: formErrors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -81,12 +88,12 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      await login(data.email, data.password);
+      await signIn(data.email, data.password);
       toast.success('Login realizado com sucesso!');
       router.push('/dashboard');
     } catch (error) {
       console.error(error);
-      toast.error('Falha ao fazer login. Verifique suas credenciais.');
+      toast.error('Erro ao fazer login. Verifique suas credenciais.');
     } finally {
       setIsLoading(false);
     }
@@ -137,7 +144,7 @@ export default function Login() {
       newErrors.password = 'Senha deve ter no mínimo 6 caracteres';
     }
 
-    setErrors(newErrors);
+    setCredentials(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -338,10 +345,10 @@ export default function Login() {
                     type="email"
                     placeholder="seu@email.com"
                     {...register('email')}
-                    className={errors.email ? 'border-red-500' : 'border-gray-300'}
+                    className={formErrors.email ? 'border-red-500' : 'border-gray-300'}
                   />
-                  {errors.email && (
-                    <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                  {formErrors.email && (
+                    <p className="text-red-500 text-xs mt-1">{formErrors.email.message}</p>
                   )}
                 </div>
 
@@ -355,7 +362,7 @@ export default function Login() {
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
                       {...register('password')}
-                      className={errors.password ? 'border-red-500' : 'border-gray-300'}
+                      className={formErrors.password ? 'border-red-500' : 'border-gray-300'}
                     />
                     <button
                       type="button"
@@ -365,8 +372,8 @@ export default function Login() {
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  {errors.password && (
-                    <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                  {formErrors.password && (
+                    <p className="text-red-500 text-xs mt-1">{formErrors.password.message}</p>
                   )}
                 </div>
 

@@ -1,7 +1,5 @@
-"use client";
-
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
 import { AuthProvider } from '@/contexts/AuthContext';
 import './globals.css';
