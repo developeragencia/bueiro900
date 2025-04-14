@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Facebook, Mail, Lock, Loader2, AlertCircle, Google } from 'lucide-react';
+import { AlertCircle, Facebook, Loader2, Lock, Mail } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -167,7 +168,7 @@ export default function LoginPage() {
                 disabled={isLoading}
                 className="w-full"
               >
-                <Google className="h-5 w-5 text-red-500 mr-2" />
+                <FcGoogle className="h-5 w-5 text-red-500 mr-2" />
                 Continuar com Google
               </Button>
 

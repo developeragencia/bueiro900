@@ -69,25 +69,38 @@ const mockSettings: BusinessManagerSettings = {
   },
 };
 
+export const dynamic = 'force-static';
+
+export async function generateStaticParams() {
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' },
+  ];
+}
+
 // GET /api/facebook/business-managers/[id]/settings
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    // Aqui você implementaria a lógica para buscar as configurações do banco de dados
-    // Por enquanto, retornamos dados mockados
-    return NextResponse.json({
-      ...mockSettings,
-      id: params.id,
-    });
-  } catch (error) {
-    console.error('Erro ao buscar configurações:', error);
-    return NextResponse.json(
-      { error: 'Erro ao buscar configurações' },
-      { status: 500 }
-    );
-  }
+export async function GET() {
+  const settings = {
+    notifications: true,
+    autoSync: false,
+    frequency: 'daily',
+    webhooks: {
+      enabled: true,
+      endpoints: ['https://api.example.com/webhook'],
+    },
+    integrations: {
+      crm: true,
+      analytics: false,
+    },
+    permissions: {
+      read: true,
+      write: true,
+      admin: false,
+    },
+  };
+
+  return Response.json({ settings });
 }
 
 // PUT /api/facebook/business-managers/[id]/settings

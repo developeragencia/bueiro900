@@ -48,17 +48,29 @@ const mockMetrics: DashboardMetrics = {
   },
 };
 
+export const dynamic = 'force-static';
+
 // GET /api/dashboard/metrics
-export async function GET(request: NextRequest) {
-  try {
-    // Aqui você implementaria a lógica para buscar as métricas do banco de dados
-    // Por enquanto, retornamos dados mockados
-    return NextResponse.json(mockMetrics);
-  } catch (error) {
-    console.error('Erro ao buscar métricas:', error);
-    return NextResponse.json(
-      { error: 'Erro ao buscar métricas do dashboard' },
-      { status: 500 }
-    );
-  }
+export async function GET() {
+  const metrics = {
+    totalSales: 15000,
+    totalCustomers: 250,
+    averageOrderValue: 60,
+    conversionRate: 2.5,
+    revenueByMonth: [
+      { month: 'Jan', revenue: 12000 },
+      { month: 'Fev', revenue: 15000 },
+      { month: 'Mar', revenue: 18000 },
+      { month: 'Abr', revenue: 16000 },
+      { month: 'Mai', revenue: 21000 },
+      { month: 'Jun', revenue: 19000 },
+    ],
+    topProducts: [
+      { name: 'Produto A', sales: 150 },
+      { name: 'Produto B', sales: 120 },
+      { name: 'Produto C', sales: 100 },
+    ],
+  };
+
+  return Response.json({ metrics });
 } 

@@ -14,7 +14,6 @@ import {
   Loader2,
   Github,
   Facebook,
-  Google,
   ArrowLeft
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -30,6 +29,7 @@ import {
 } from "@/components/ui/card";
 import { toast } from 'sonner';
 import { Separator } from "@/components/ui/separator";
+import { FcGoogle } from "react-icons/fc";
 
 interface RegisterData {
   name: string;
@@ -37,6 +37,14 @@ interface RegisterData {
   password: string;
   confirmPassword: string;
   acceptTerms: boolean;
+}
+
+interface RegisterErrors {
+  name?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  acceptTerms?: string;
 }
 
 export default function RegisterPage() {
@@ -51,10 +59,10 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Partial<RegisterData>>({});
+  const [errors, setErrors] = useState<RegisterErrors>({});
 
   const validateForm = () => {
-    const newErrors: Partial<RegisterData> = {};
+    const newErrors: RegisterErrors = {};
 
     if (!formData.name) {
       newErrors.name = 'Nome é obrigatório';
@@ -186,7 +194,7 @@ export default function RegisterPage() {
                 onClick={() => handleSocialRegister('google')}
                 disabled={isLoading}
               >
-                <Google className="h-5 w-5 mr-2" />
+                <FcGoogle className="h-5 w-5 mr-2" />
                 Cadastrar com Google
               </Button>
               <Button

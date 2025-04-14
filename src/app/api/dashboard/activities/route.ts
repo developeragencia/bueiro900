@@ -3,12 +3,14 @@ import type { NextRequest } from 'next/server';
 
 interface RecentActivity {
   id: string;
-  type: 'sale' | 'integration' | 'customer' | 'alert';
+  type: 'sale' | 'integration' | 'customer' | 'alert' | 'login';
   title: string;
   description: string;
   timestamp: Date;
   status?: 'success' | 'pending' | 'error';
   amount?: number;
+  user?: string;
+  details?: string;
 }
 
 // Dados mockados para exemplo
@@ -45,8 +47,20 @@ const mockActivities: RecentActivity[] = [
     description: 'Atualização de segurança disponível',
     timestamp: new Date(Date.now() - 86400000), // 24 horas atrás
     status: 'error'
+  },
+  {
+    id: '5',
+    type: 'login',
+    title: 'Login bem-sucedido',
+    description: 'Login bem-sucedido',
+    timestamp: new Date(),
+    status: 'success',
+    user: 'João Silva',
+    details: 'Login bem-sucedido'
   }
 ];
+
+export const dynamic = 'force-static';
 
 // GET /api/dashboard/activities
 export async function GET(request: NextRequest) {

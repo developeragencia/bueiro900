@@ -93,43 +93,69 @@ const mockDetails: BusinessManagerDetails = {
   ],
 };
 
+export const dynamic = 'force-static';
+
+export async function generateStaticParams() {
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' },
+  ];
+}
+
 // GET /api/facebook/business-managers/[id]
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
-    // Aqui você implementaria a lógica para buscar os dados reais da API do Facebook
-    // Por enquanto, retornamos dados mockados
-    return NextResponse.json({
-      ...mockDetails,
-      id: params.id,
-    });
+    const { id } = params;
+    
+    // Simulação de dados do Business Manager
+    const businessManager = {
+      id,
+      name: `Business Manager ${id}`,
+      status: 'active',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    return NextResponse.json(businessManager);
   } catch (error) {
-    console.error('Erro ao buscar detalhes:', error);
     return NextResponse.json(
-      { error: 'Erro ao buscar detalhes do Business Manager' },
+      { error: 'Erro ao buscar Business Manager' },
       { status: 500 }
     );
   }
 }
 
-// DELETE /api/facebook/business-managers/[id]
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
-    // Aqui você implementaria a lógica para remover o Business Manager
-    // Por enquanto, apenas simulamos uma resposta de sucesso
-    return NextResponse.json({
-      success: true,
-      message: 'Business Manager removido com sucesso',
-    });
+    const { id } = params;
+    const body = await request.json();
+
+    // Simulação de atualização do Business Manager
+    const updatedBusinessManager = {
+      id,
+      ...body,
+      updatedAt: new Date().toISOString(),
+    };
+
+    return NextResponse.json(updatedBusinessManager);
   } catch (error) {
-    console.error('Erro ao remover:', error);
     return NextResponse.json(
-      { error: 'Erro ao remover Business Manager' },
+      { error: 'Erro ao atualizar Business Manager' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+  try {
+    const { id } = params;
+
+    // Simulação de exclusão do Business Manager
+    return NextResponse.json({ message: `Business Manager ${id} excluído com sucesso` });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Erro ao excluir Business Manager' },
       { status: 500 }
     );
   }

@@ -186,10 +186,10 @@ export default function SubscriptionPlans() {
             <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
             <div className="mb-6">
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">
+              <span className="text-4xl font-bold">
                   R$ {plan.price[paymentMethod].toFixed(2)}
-                </span>
-                <span className="text-gray-500">/mês</span>
+              </span>
+              <span className="text-gray-500">/mês</span>
               </div>
               {paymentMethod === 'credit' && (
                 <p className="text-sm text-gray-500 mt-1">

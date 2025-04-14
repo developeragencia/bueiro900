@@ -15,16 +15,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-interface DateRangePickerProps extends React.HTMLAttributes<HTMLDivElement> {
-  date: DateRange | undefined
-  onDateChange: (date: DateRange | undefined) => void
-}
-
-export function DateRangePicker({
-  date,
-  onDateChange,
+export function DatePickerWithRange({
   className,
-}: DateRangePickerProps) {
+  value,
+  onChange,
+}: {
+  className?: string;
+  value?: DateRange;
+  onChange?: (date: DateRange | undefined) => void;
+}) {
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -34,18 +33,18 @@ export function DateRangePicker({
             variant={"outline"}
             className={cn(
               "w-[300px] justify-start text-left font-normal",
-              !date && "text-muted-foreground"
+              !value && "text-muted-foreground"
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
+            {value?.from ? (
+              value.to ? (
                 <>
-                  {format(date.from, "LLL dd, y", { locale: ptBR })} -{" "}
-                  {format(date.to, "LLL dd, y", { locale: ptBR })}
+                  {format(value.from, "LLL dd, y")} -{" "}
+                  {format(value.to, "LLL dd, y")}
                 </>
               ) : (
-                format(date.from, "LLL dd, y", { locale: ptBR })
+                format(value.from, "LLL dd, y")
               )
             ) : (
               <span>Selecione um período</span>
@@ -56,11 +55,10 @@ export function DateRangePicker({
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={date?.from}
-            selected={date}
-            onSelect={onDateChange}
+            defaultMonth={value?.from}
+            selected={value}
+            onSelect={onChange}
             numberOfMonths={2}
-            locale={ptBR}
           />
         </PopoverContent>
       </Popover>
