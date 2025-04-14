@@ -1,15 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  trailingSlash: true,
+  distDir: 'out',
   images: {
     unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+    loader: 'custom',
+    loaderFile: './src/lib/imageLoader.ts',
   },
   eslint: {
     ignoreDuringBuilds: true,

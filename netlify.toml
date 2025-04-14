@@ -1,6 +1,7 @@
 [build]
   command = "npm run netlify-build"
   publish = "out"
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ./package-lock.json"
 
 [build.environment]
   NEXT_TELEMETRY_DISABLED = "1"
@@ -8,19 +9,31 @@
   NPM_FLAGS = "--legacy-peer-deps --no-audit --no-fund"
   CI = "false"
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NEXT_PUBLIC_SITE_URL = "https://bueiro3369.netlify.app"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; img-src 'self' data: blob: https:; connect-src 'self' https:; frame-ancestors 'none';"
 
-[functions]
-  node_bundler = "esbuild"
-  included_files = ["public/**"]
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
   force = true
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["public/**"]
 
 [dev]
   framework = "nextjs"
