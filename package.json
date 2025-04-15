@@ -74,7 +74,10 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5",
     "zod": "^3.22.4",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "@netlify/next": "^1.4.9",
+    "@netlify/functions": "^2.6.0",
+    "@opentelemetry/api": "^1.7.0"
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^4.41.3",

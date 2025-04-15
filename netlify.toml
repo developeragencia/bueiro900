@@ -1,5 +1,5 @@
 [build]
-  command = "NODE_ENV=production npm ci && npm run build"
+  command = "npm install && npm run build"
   publish = ".next"
 
 [build.environment]
@@ -11,33 +11,13 @@
   NODE_ENV = "production"
   CI = "true"
   NPM_FLAGS = "--legacy-peer-deps --no-audit --no-optional"
-  NEXT_SHARP_PATH = "/tmp/node_modules/sharp"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [functions]
-  included_files = ["node_modules/@prisma/client/**/*", "node_modules/.prisma/**/*"]
   node_bundler = "esbuild"
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; img-src 'self' data: blob: https:; connect-src 'self' https:; frame-ancestors 'none';"
-
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/next_server"
-  status = 200
-  force = true
-
-[dev]
-  framework = "nextjs"
-  targetPort = 3000
+  external_node_modules = ["@prisma/client"]
 
 [build.processing]
   skip_processing = false
@@ -55,6 +35,25 @@
 
 [build.processing.images]
   compress = true
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/next_server"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; img-src 'self' data: blob: https:; connect-src 'self' https:; frame-ancestors 'none';"
+
+[dev]
+  framework = "nextjs"
+  targetPort = 3000
 
 [build.cache]
   directory = ".next/cache"
