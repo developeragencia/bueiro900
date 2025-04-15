@@ -20,11 +20,16 @@ const nextConfig = {
     return config;
   },
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://bueiro3369.netlify.app',
   },
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
+  // Desativa o cache de build para evitar problemas
+  onDemandEntries: {
+    maxInactiveAge: 60 * 1000,
+    pagesBufferLength: 5,
+  },
 };
 
 module.exports = nextConfig;

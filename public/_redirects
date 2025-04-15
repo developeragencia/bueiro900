@@ -1,1 +1,14 @@
-/* /index.html 200 
+# Redirecionamentos para SPA
+/* /index.html 200
+
+# Redirecionamentos para páginas específicas
+/dashboard/* /index.html 200
+/auth/* /index.html 200
+/integracoes/* /index.html 200
+/settings/* /index.html 200
+
+# Redirecionamentos para API (se necessário)
+/api/* /index.html 200
+
+# Redirecionamento para página 404
+/* /404.html 404 
