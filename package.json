@@ -8,13 +8,14 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export",
+    "build": "next build",
+    "export": "next export",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate || true",
     "prebuild": "rimraf out",
-    "postbuild": "cp -r public/* out/",
-    "netlify-build": "npm install --legacy-peer-deps && npm run build"
+    "postbuild": "next export",
+    "netlify-build": "npm install --legacy-peer-deps && npm run build && npm run export"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
