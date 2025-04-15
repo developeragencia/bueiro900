@@ -50,6 +50,9 @@ const nextConfig = {
   poweredByHeader: false,
   generateEtags: false,
   compress: true,
+  // Excluir rotas de API do build estático
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
+  exclude: ['/api/**'],
 };
 
 module.exports = nextConfig;
