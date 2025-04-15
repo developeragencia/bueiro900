@@ -30,10 +30,12 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
+    DATABASE_URL: process.env.DATABASE_URL,
   },
   experimental: {
     appDir: true,
     webpackBuildWorker: true,
+    serverComponentsExternalPackages: ['@prisma/client'],
   },
   // Configurações de cache
   cache: {

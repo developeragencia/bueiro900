@@ -139,7 +139,7 @@
 }
 
 .pricing-free-trial {
-  @apply bg-slate-100 rounded-sm5 p-3 md:p-8;
+  @apply bg-slate-100 rounded-md p-3 md:p-8;
 }
 
 /* Animações de transição suave */
