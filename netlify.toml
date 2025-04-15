@@ -1,6 +1,7 @@
 [build]
-  command = "npm run netlify-build"
+  command = "npm run build"
   publish = ".next"
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ':(exclude)package-lock.json'"
 
 [build.environment]
   NEXT_USE_NETLIFY_EDGE = "true"
@@ -27,13 +28,16 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
-  force = true
+  to = "/404"
+  status = 404
 
 [dev]
   framework = "nextjs"
   targetPort = 3000
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 [build.processing]
   skip_processing = false
