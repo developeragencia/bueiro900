@@ -3,4 +3,10 @@
 [url "https://github.com/"]
     insteadOf = git@github.com:
 [credential]
-    helper = store 
+    helper = store
+[http]
+    sslVerify = false
+    lowSpeedLimit = 0
+    lowSpeedTime = 999999
+[fetch]
+    recurseSubmodules = false 
