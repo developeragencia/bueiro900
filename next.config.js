@@ -4,8 +4,13 @@ const nextConfig = {
   distDir: 'out',
   images: {
     unoptimized: true,
-    loader: 'custom',
-    loaderFile: './src/lib/image-loader.js',
+    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
   trailingSlash: true,
   reactStrictMode: true,
@@ -26,9 +31,23 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
   },
-  compress: true,
+  experimental: {
+    appDir: true,
+    webpackBuildWorker: true,
+  },
+  // Configurações de cache
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename],
+    },
+  },
+  // Configurações específicas para o Netlify
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/' : '',
+  basePath: '',
   poweredByHeader: false,
   generateEtags: false,
+  compress: true,
 };
 
 module.exports = nextConfig;

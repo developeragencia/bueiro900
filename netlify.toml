@@ -8,6 +8,7 @@
   NPM_FLAGS = "--legacy-peer-deps"
   NEXT_PUBLIC_SITE_URL = "https://bueiro3369.netlify.app"
   NODE_ENV = "production"
+  NEXT_CACHE_DIR = ".next/cache"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
@@ -48,3 +49,6 @@
 
 [build.processing.images]
   compress = true
+
+[build.cache]
+  directory = ".next/cache"
