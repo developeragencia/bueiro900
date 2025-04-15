@@ -1,7 +1,6 @@
 [build]
-  command = "npm install --legacy-peer-deps && npm run build"
+  command = "NODE_ENV=production npm ci && npm run build"
   publish = ".next"
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ':(exclude)package-lock.json'"
 
 [build.environment]
   NEXT_USE_NETLIFY_EDGE = "true"
@@ -11,7 +10,8 @@
   NEXT_PUBLIC_SITE_URL = "https://bueiro3369.netlify.app"
   NODE_ENV = "production"
   CI = "true"
-  NPM_FLAGS = "--legacy-peer-deps --no-audit"
+  NPM_FLAGS = "--legacy-peer-deps --no-audit --no-optional"
+  NEXT_SHARP_PATH = "/tmp/node_modules/sharp"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
@@ -19,7 +19,6 @@
 [functions]
   included_files = ["node_modules/@prisma/client/**/*", "node_modules/.prisma/**/*"]
   node_bundler = "esbuild"
-  external_node_modules = ["@prisma/client", ".prisma"]
 
 [[headers]]
   for = "/*"
