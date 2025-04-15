@@ -133,7 +133,7 @@ export default function ProfilePage() {
       toast.error('Usuário não encontrado');
       return;
     }
-    
+
     try {
       setIsSaving(true);
       
