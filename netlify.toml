@@ -8,6 +8,7 @@
   NPM_FLAGS = "--legacy-peer-deps"
   NEXT_PUBLIC_SITE_URL = "https://bueiro3369.netlify.app"
   NODE_ENV = "production"
+  DATABASE_URL = "file:./prisma/dev.db"
   NEXT_CACHE_DIR = ".next/cache"
 
 [[plugins]]

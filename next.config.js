@@ -30,19 +30,10 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
-    DATABASE_URL: process.env.DATABASE_URL,
   },
   experimental: {
-    appDir: true,
     webpackBuildWorker: true,
     serverComponentsExternalPackages: ['@prisma/client'],
-  },
-  // Configurações de cache
-  cache: {
-    type: 'filesystem',
-    buildDependencies: {
-      config: [__filename],
-    },
   },
   // Configurações específicas para o Netlify
   assetPrefix: process.env.NODE_ENV === 'production' ? '/' : '',
@@ -50,6 +41,13 @@ const nextConfig = {
   poweredByHeader: false,
   generateEtags: false,
   compress: true,
+  // Configurações de cache
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename],
+    },
+  },
   // Excluir rotas de API do build estático
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
   exclude: ['/api/**'],
