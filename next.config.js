@@ -3,8 +3,6 @@ const nextConfig = {
   output: 'export',
   images: {
     unoptimized: true,
-    loader: 'custom',
-    loaderFile: './src/lib/image-loader.js',
   },
   trailingSlash: true,
   reactStrictMode: true,

@@ -1,6 +1,6 @@
 [build]
   command = "npm run netlify-build"
-  publish = "out"
+  publish = ".next"
 
 [build.environment]
   NEXT_TELEMETRY_DISABLED = "1"
@@ -8,6 +8,9 @@
   NPM_FLAGS = "--legacy-peer-deps"
   NEXT_PUBLIC_SITE_URL = "https://bueiro3369.netlify.app"
   NODE_ENV = "production"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [[headers]]
   for = "/*"
