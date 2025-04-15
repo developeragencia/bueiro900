@@ -3,20 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "node": ">=18.17.0",
+    "npm": ">=9.6.7"
   },
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "postinstall": "prisma generate",
-    "seed": "ts-node src/scripts/seed.ts"
+    "seed": "ts-node src/scripts/seed.ts",
+    "clean": "rimraf .next out",
+    "prebuild": "npm run clean && npm run prisma:generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
