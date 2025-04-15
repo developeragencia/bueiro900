@@ -44,7 +44,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from 'sonner';
 import DashboardLayout from '@/components/DashboardLayout';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import ptBR from 'date-fns/locale/pt-BR';
 
 interface SearchResult {
   id: string;
