@@ -5,16 +5,20 @@
 
 [build.environment]
   NEXT_USE_NETLIFY_EDGE = "true"
-  NODE_VERSION = "18"
-  NPM_VERSION = "8"
+  NODE_VERSION = "18.17.0"
+  NPM_VERSION = "9.6.7"
   NEXT_TELEMETRY_DISABLED = "1"
   NEXT_PUBLIC_SITE_URL = "https://bueiro3369.netlify.app"
   NODE_ENV = "production"
-  DATABASE_URL = "file:./prisma/dev.db"
-  NEXT_CACHE_DIR = ".next/cache"
+  CI = "true"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[functions]
+  included_files = ["node_modules/@prisma/client/**/*", "node_modules/.prisma/**/*"]
+  node_bundler = "esbuild"
+  external_node_modules = ["@prisma/client", ".prisma"]
 
 [[headers]]
   for = "/*"
@@ -24,20 +28,16 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; img-src 'self' data: blob: https:; connect-src 'self' https:; frame-ancestors 'none';"
-    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[redirects]]
   from = "/*"
-  to = "/404"
-  status = 404
+  to = "/.netlify/functions/next_server"
+  status = 200
+  force = true
 
 [dev]
   framework = "nextjs"
   targetPort = 3000
-
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
 
 [build.processing]
   skip_processing = false
