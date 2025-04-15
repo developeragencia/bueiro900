@@ -10,7 +10,11 @@
   CI = "false"
   NEXT_PUBLIC_SITE_URL = "https://bueiro3369.netlify.app"
   GIT_TERMINAL_PROMPT = "0"
-  GIT_SSH_COMMAND = "ssh -o StrictHostKeyChecking=no"
+  GIT_SSH_COMMAND = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+  GIT_LFS_SKIP_SMUDGE = "1"
+  GIT_ASKPASS = "echo"
+  GIT_SSH_VARIANT = "ssh"
+  GIT_URL = "https://github.com/developeragencia/bueiro3369.git"
 
 [[headers]]
   for = "/*"

@@ -1,0 +1,6 @@
+[core]
+    sshCommand = ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+[url "https://github.com/"]
+    insteadOf = git@github.com:
+[credential]
+    helper = store 
