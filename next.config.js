@@ -45,7 +45,11 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client'],
     optimizeCss: true,
-    turbo: true,
+    turbo: {
+      resolveAlias: {
+        '@': './src',
+      },
+    },
   },
   swcMinify: true,
   compress: true,
