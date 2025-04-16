@@ -49,6 +49,9 @@ const nextConfig = {
     'cmdk',
     'react-icons',
     'recharts',
+    'react-chartjs-2',
+    'react-day-picker',
+    'firebase',
   ],
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client'],
