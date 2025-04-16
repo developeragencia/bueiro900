@@ -33,7 +33,7 @@ const nextConfig = {
     };
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': './src',
+      '@': require('path').resolve(__dirname, 'src'),
     };
     return config;
   },
@@ -53,7 +53,7 @@ const nextConfig = {
     optimizeCss: true,
     turbo: {
       resolveAlias: {
-        '@': './src',
+        '@': require('path').resolve(__dirname, 'src'),
       },
     },
   },
