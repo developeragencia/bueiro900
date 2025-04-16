@@ -47,6 +47,8 @@ const nextConfig = {
     '@radix-ui/react-hover-card',
     '@radix-ui/react-context-menu',
     'cmdk',
+    'react-icons',
+    'recharts',
   ],
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client'],
