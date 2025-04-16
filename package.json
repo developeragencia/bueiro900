@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=18.18.0",
-    "npm": ">=9.6.7"
+    "node": "18.18.0",
+    "npm": "9.6.7"
   },
   "scripts": {
     "dev": "next dev",
@@ -16,7 +16,9 @@
     "prisma:studio": "prisma studio",
     "postinstall": "prisma generate",
     "seed": "ts-node -P tsconfig.node.json src/scripts/seed.ts",
-    "clean": "rm -rf .next out dist"
+    "clean": "rm -rf .next out dist",
+    "netlify-build": "npm run clean && npm run prisma:generate && next build",
+    "netlify-dev": "netlify dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

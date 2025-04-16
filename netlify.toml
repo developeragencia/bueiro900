@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm install && npm run prisma:generate && npm run build"
   publish = ".next"
   functions = "netlify/functions"
 
@@ -11,6 +11,7 @@
   NODE_ENV = "production"
   PRISMA_GENERATE_IN_POSTINSTALL = "true"
   NEXT_PUBLIC_API_URL = "https://bueiro900.netlify.app"
+  DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/bueiro?schema=public"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
@@ -18,6 +19,14 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["@prisma/client"]
+  included_files = ["prisma/**"]
+
+[[redirects]]
+  from = "/*"
+  to = "/_next/static/:splat"
+  status = 200
+  force = true
+  conditions = {Path = ["/_next/static/**"]}
 
 [[redirects]]
   from = "/*"
@@ -27,6 +36,7 @@
 [dev]
   framework = "nextjs"
   targetPort = 3000
+  port = 8888
 
 [build.processing]
   skip_processing = false
@@ -50,3 +60,12 @@
 
 [build.edge_functions]
   directory = "netlify/functions"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:; img-src 'self' https: data:; font-src 'self' https: data:; frame-ancestors 'none';"
