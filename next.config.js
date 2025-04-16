@@ -35,6 +35,9 @@ const nextConfig = {
   },
   output: 'standalone',
   distDir: '.next',
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client'],
+  },
 };
 
 module.exports = nextConfig;

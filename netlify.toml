@@ -10,6 +10,7 @@
   NEXT_TELEMETRY_DISABLED = "1"
   NODE_ENV = "production"
   PRISMA_GENERATE_IN_POSTINSTALL = "true"
+  NEXT_PUBLIC_API_URL = "https://bueiro900.netlify.app"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
@@ -46,3 +47,6 @@
 
 [build.cache]
   directory = ".next/cache"
+
+[build.edge_functions]
+  directory = "netlify/functions"
