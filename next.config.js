@@ -50,6 +50,12 @@ const nextConfig = {
         '@': './src',
       },
     },
+    transpilePackages: [
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-hover-card',
+      '@radix-ui/react-context-menu',
+      'cmdk',
+    ],
   },
   swcMinify: true,
   compress: true,
