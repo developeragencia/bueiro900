@@ -33,7 +33,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
   },
-  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  output: 'standalone',
   distDir: '.next',
 };
 
