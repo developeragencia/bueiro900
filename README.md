@@ -1,113 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bueiro Digital
 
-# Bueiro Digital - UTM Campaign Tracking Tool
+Sistema de gestão de métricas para marketing digital.
 
-Bueiro Digital is a comprehensive UTM campaign tracking tool that helps marketers manage, analyze, and optimize their marketing campaigns across various channels.
+## Tecnologias Utilizadas
 
-## Features
+- Next.js 14
+- TypeScript
+- Prisma
+- Firebase (Auth & Storage)
+- SQLite
+- TailwindCSS
 
-- **Campaign Management**: Create, edit, and track marketing campaigns with UTM parameters
-- **Advanced Analytics**: Detailed analytics and visualizations for campaign performance
-- **Global Search**: Search across all campaigns with advanced filtering options
-- **Campaign Comparison**: Compare multiple campaigns side by side
-- **Social Sharing**: Share campaign links via email, WhatsApp, and social media platforms
-- **Integration Support**: Connect with multiple marketing platforms such as Ticto, ClickBank, and BuyGoods
-- **Admin Dashboard**: Comprehensive admin interface with sales metrics and platform management
+## Pré-requisitos
 
-## Tech Stack
+- Node.js 18+
+- npm ou yarn
+- Conta no Firebase
 
-- **Next.js**: React framework for server-rendered applications
-- **TypeScript**: Type-safe JavaScript
-- **Tailwind CSS**: Utility-first CSS framework
-- **Shadcn UI**: High-quality UI components
-- **Zustand**: State management
-- **Recharts**: Data visualization library
+## Configuração
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ or Bun 1.0+
-
-### Installation
-
-1. Clone the repository
-   ```bash
-   git clone https://github.com/your-username/bueiro-digital.git
-   ```
-
-2. Install dependencies
-   ```bash
-   cd utmify-clone
-   bun install
-   ```
-
-3. Run the development server
-   ```bash
-   bun run dev
-   ```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## Deployment
-
-### Deploying to Netlify
-
-1. Create a new site on Netlify
-2. Connect your repository
-3. Use the following build settings:
-   - Build command: `bun run build`
-   - Publish directory: `.next`
-4. Add the following environment variables:
-   - `NEXT_TELEMETRY_DISABLED`: `1`
-
-You can also use the Netlify CLI for deployment:
-
+1. Clone o repositório:
 ```bash
-# Install Netlify CLI
-npm install -g netlify-cli
-
-# Login to Netlify
-netlify login
-
-# Initialize a new Netlify site
-netlify init
-
-# Deploy to Netlify
-netlify deploy --prod
+git clone [URL_DO_REPOSITÓRIO]
+cd bueiro-digital
 ```
 
-### Deploying to Vercel
-
-1. Create a new project on Vercel
-2. Connect your repository
-3. Vercel will automatically detect Next.js settings
-4. Deploy
-
-You can also use the Vercel CLI:
-
+2. Instale as dependências:
 ```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Login to Vercel
-vercel login
-
-# Deploy to Vercel
-vercel --prod
+npm install
+# ou
+yarn install
 ```
 
-## Contributing
+3. Configure as variáveis de ambiente:
+- Copie o arquivo `.env.example` para `.env.local`
+- Preencha as variáveis com suas credenciais do Firebase
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+4. Execute as migrações do banco de dados:
+```bash
+npx prisma migrate dev
+```
 
-## License
+5. Inicie o servidor de desenvolvimento:
+```bash
+npm run dev
+# ou
+yarn dev
+```
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+O aplicativo estará disponível em `http://localhost:3000`
+
+## Funcionalidades
+
+- Autenticação de usuários com Firebase
+- Dashboard de métricas
+- Gestão de campanhas
+- Relatórios de desempenho
+- Análise de ROI e ROAS
+
+## Estrutura do Projeto
+
+```
+bueiro-digital/
+├── app/              # Rotas e componentes Next.js
+├── components/       # Componentes React reutilizáveis
+├── lib/             # Configurações e utilitários
+├── prisma/          # Schema e migrações do banco de dados
+└── public/          # Arquivos estáticos
+```
+
+## Contribuição
+
+1. Faça um Fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
 ## Learn More
 

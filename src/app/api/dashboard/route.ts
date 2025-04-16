@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const dataCadastro = searchParams.get('dataCadastro') || '7dias';
-    const contaAnuncio = searchParams.get('contaAnuncio');
-    const plataforma = searchParams.get('plataforma');
-    const produto = searchParams.get('produto');
+    const url = new URL(request.url);
+    const dataCadastro = url.searchParams.get('dataCadastro') || '7dias';
+    const contaAnuncio = url.searchParams.get('contaAnuncio');
+    const plataforma = url.searchParams.get('plataforma');
+    const produto = url.searchParams.get('produto');
 
     // Calcula a data inicial baseada no filtro
     const dataInicial = new Date();

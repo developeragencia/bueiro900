@@ -141,7 +141,7 @@ export default function DashboardPage() {
             total={dashboardData.totalVendas}
           />
         </div>
-        
+
         <div className="col-span-8 grid grid-cols-2 gap-4">
           <DashboardCard
             title="Vendas Pendentes"

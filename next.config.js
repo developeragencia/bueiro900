@@ -1,23 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  trailingSlash: true,
   reactStrictMode: true,
-  eslint: {
-    ignoreDuringBuilds: true,
+  images: {
+    domains: ['firebasestorage.googleapis.com'],
   },
   typescript: {
     ignoreBuildErrors: true,
   },
-  images: {
-    unoptimized: true,
-    domains: ['localhost', 'firebasestorage.googleapis.com', 'github.com'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+  eslint: {
+    ignoreDuringBuilds: true,
   },
+  trailingSlash: true,
   webpack: (config) => {
     config.resolve.fallback = {
       fs: false,
@@ -40,11 +33,8 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
   },
-  output: 'standalone',
+  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
   distDir: '.next',
-  generateBuildId: async () => {
-    return 'build-' + Date.now();
-  },
 };
 
 module.exports = nextConfig;
