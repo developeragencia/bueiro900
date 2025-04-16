@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -14,4 +14,29 @@ model User {
   password      String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model DashboardMetrics {
+  id                 String   @id @default(cuid())
+  faturamentoLiquido Float
+  gastosAnuncios     Float
+  roas              Float
+  lucro             Float
+  vendasPendentes   Float
+  vendasReembolsadas Float
+  imposto           Float
+  roi               Float
+  margemLucro       Float
+  reembolso         Float
+  arpu              Float
+  chargeback        Float
+  pixVendas         Int
+  cartaoVendas      Int
+  boletoVendas      Int
+  outrosVendas      Int
+  totalVendas       Int
+  dataCadastro      DateTime @default(now())
+  contaAnuncio      String?
+  plataforma        String?
+  produto           String?
 } 

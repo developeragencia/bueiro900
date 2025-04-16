@@ -1,0 +1,25 @@
+-- CreateTable
+CREATE TABLE "DashboardMetrics" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "faturamentoLiquido" REAL NOT NULL,
+    "gastosAnuncios" REAL NOT NULL,
+    "roas" REAL NOT NULL,
+    "lucro" REAL NOT NULL,
+    "vendasPendentes" REAL NOT NULL,
+    "vendasReembolsadas" REAL NOT NULL,
+    "imposto" REAL NOT NULL,
+    "roi" REAL NOT NULL,
+    "margemLucro" REAL NOT NULL,
+    "reembolso" REAL NOT NULL,
+    "arpu" REAL NOT NULL,
+    "chargeback" REAL NOT NULL,
+    "pixVendas" INTEGER NOT NULL,
+    "cartaoVendas" INTEGER NOT NULL,
+    "boletoVendas" INTEGER NOT NULL,
+    "outrosVendas" INTEGER NOT NULL,
+    "totalVendas" INTEGER NOT NULL,
+    "dataCadastro" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "contaAnuncio" TEXT,
+    "plataforma" TEXT,
+    "produto" TEXT
+);
