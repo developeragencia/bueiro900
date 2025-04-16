@@ -26,7 +26,7 @@ export interface Campaign {
   spend: number;
   revenue: number;
   conversions: number;
-  visits?: number; // Added visits property
+  visits?: number;
   dateCreated: string;
   dateUpdated: string;
   tags: string[];
