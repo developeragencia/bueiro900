@@ -2,6 +2,7 @@
   command = "npm install && npm run prisma:generate && npm run build"
   publish = ".next"
   functions = "netlify/functions"
+  edge_functions = "netlify/functions"
 
 [build.environment]
   NEXT_USE_NETLIFY_EDGE = "true"
@@ -57,9 +58,6 @@
 
 [build.cache]
   directory = ".next/cache"
-
-[build.edge_functions]
-  directory = "netlify/functions"
 
 [[headers]]
   for = "/*"
