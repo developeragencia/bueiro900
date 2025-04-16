@@ -64,6 +64,8 @@ const nextConfig = {
     '@radix-ui/react-tooltip',
     '@tanstack/react-query',
     '@tanstack/react-table',
+    '@auth/prisma-adapter',
+    'next-auth',
     'cmdk',
     'react-icons',
     'recharts',
@@ -84,7 +86,8 @@ const nextConfig = {
     'zustand',
     'react-hook-form',
     '@hookform/resolvers',
-    'axios'
+    'axios',
+    'bcryptjs'
   ],
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client'],
