@@ -1,0 +1,66 @@
+<svg width="200" height="80" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Definição das animações -->
+  <defs>
+    <linearGradient id="rocketGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2557b1" />
+      <stop offset="100%" stop-color="#1a3d7c" />
+    </linearGradient>
+
+    <!-- Animação do foguete -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0 0 0 0 0 0.5 0 0 0 0 1 0 0 0 0.8 0" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Animação do fogo -->
+    <radialGradient id="flameGradient" cx="50%" cy="90%" r="50%" fx="50%" fy="90%">
+      <stop offset="0%" stop-color="#ff9500" />
+      <stop offset="70%" stop-color="#ff5b00" />
+      <stop offset="100%" stop-color="#ff0000" />
+    </radialGradient>
+  </defs>
+
+  <!-- Animação do fogo do foguete -->
+  <g transform="translate(40, 50)">
+    <path class="flame" d="M0,0 Q-5,10 -10,18 Q0,15 10,18 Q5,10 0,0" fill="url(#flameGradient)">
+      <animate attributeName="d"
+        values="M0,0 Q-5,10 -10,18 Q0,15 10,18 Q5,10 0,0;
+                M0,0 Q-8,12 -8,20 Q0,18 8,20 Q8,12 0,0;
+                M0,0 Q-5,10 -10,18 Q0,15 10,18 Q5,10 0,0"
+        dur="0.5s" repeatCount="indefinite" />
+      <animateTransform attributeName="transform" type="scale"
+        values="1 1; 1.1 1.2; 1 1"
+        dur="0.5s" repeatCount="indefinite" />
+    </path>
+  </g>
+
+  <!-- Corpo principal do foguete -->
+  <g transform="translate(40, 40)">
+    <animateTransform attributeName="transform" type="translate"
+        from="40, 40" to="40, 38"
+        dur="0.5s" repeatCount="indefinite" additive="sum" />
+
+    <!-- Corpo do foguete -->
+    <rect x="-10" y="-30" width="20" height="30" rx="5" fill="url(#rocketGradient)" filter="url(#glow)" />
+
+    <!-- Ponta do foguete -->
+    <path d="M-10,-30 L0,-40 L10,-30 Z" fill="url(#rocketGradient)" filter="url(#glow)" />
+
+    <!-- Janela do foguete -->
+    <circle cx="0" cy="-20" r="5" fill="white" stroke="#1a3d7c" stroke-width="1" />
+
+    <!-- Asas do foguete -->
+    <path d="M-10,-10 L-20,0 L-10,0 Z" fill="#1a3d7c" filter="url(#glow)" />
+    <path d="M10,-10 L20,0 L10,0 Z" fill="#1a3d7c" filter="url(#glow)" />
+  </g>
+
+  <!-- Texto "Bueiro Digital" em branco -->
+  <text x="80" y="42" font-family="Arial, sans-serif" font-weight="bold" font-size="18" fill="white">
+    Bueiro Digital
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite" />
+  </text>
+</svg>
