@@ -98,6 +98,7 @@ const nextConfig = {
       },
     },
   },
+  cacheHandler: require.resolve('./cache-handler.js'),
   swcMinify: true,
   compress: true,
   poweredByHeader: false,
