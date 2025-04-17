@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && npm run prisma:generate && npm run build"
+  command = "npm install --include=dev && npm run prisma:generate && npm run build"
   publish = ".next"
   functions = "netlify/functions"
   edge_functions = "netlify/functions"
@@ -23,7 +23,10 @@
     "@prisma/client",
     "next-auth",
     "@auth/prisma-adapter",
-    "bcryptjs"
+    "bcryptjs",
+    "typescript",
+    "@types/react",
+    "@types/node"
   ]
   included_files = ["prisma/**"]
 
